@@ -20,44 +20,44 @@ const TIME_PERIODS = [
 ];
 
 const SAMPLE_BETS = [
-  { id:"s1", date:"2026-02-28", sport:"NBA", betType:"Spread", team:"Celtics -4.5", odds:-110, stake:50, outcome:"Win", payout:95.45, sportsbook:"FanDuel", notes:"Celtics at home, strong ATS record this month.", confidence:4 },
-  { id:"s2", date:"2026-02-27", sport:"NFL", betType:"Moneyline", team:"Chiefs", odds:-150, stake:75, outcome:"Win", payout:125, sportsbook:"DraftKings", notes:"Mahomes in prime form.", confidence:5 },
-  { id:"s3", date:"2026-02-27", sport:"NBA", betType:"Over/Under", team:"Lakers/Warriors O224.5", odds:-105, stake:40, outcome:"Loss", payout:0, sportsbook:"BetMGM", notes:"Pace was slower than expected.", confidence:3 },
-  { id:"s4", date:"2026-02-26", sport:"NHL", betType:"Moneyline", team:"Maple Leafs", odds:130, stake:30, outcome:"Win", payout:69, sportsbook:"Bet365", notes:"Value play — Leafs underrated on the road.", confidence:3 },
-  { id:"s5", date:"2026-02-26", sport:"NBA", betType:"Parlay", team:"3-leg: Bucks ML / Nuggets -3 / Knicks ML", odds:550, stake:20, outcome:"Loss", payout:0, sportsbook:"FanDuel", notes:"Knicks blew the lead in Q4.", confidence:2 },
-  { id:"s6", date:"2026-02-25", sport:"Soccer", betType:"Moneyline", team:"Arsenal", odds:-120, stake:60, outcome:"Win", payout:110, sportsbook:"DraftKings", notes:"Arsenal dominant at home.", confidence:5 },
-  { id:"s7", date:"2026-02-24", sport:"NBA", betType:"Prop", team:"Jokic O11.5 rebounds", odds:-115, stake:45, outcome:"Win", payout:84.13, sportsbook:"Caesars", notes:"Jokic averaging 13.2 reb last 10.", confidence:4 },
-  { id:"s8", date:"2026-02-23", sport:"MLB", betType:"Futures", team:"Dodgers to win WS", odds:450, stake:25, outcome:"Pending", payout:0, sportsbook:"FanDuel", notes:"Stacked roster again.", confidence:3 },
-  { id:"s9", date:"2026-02-22", sport:"MMA", betType:"Moneyline", team:"Islam Makhachev", odds:-200, stake:100, outcome:"Win", payout:150, sportsbook:"DraftKings", notes:"Dominant grappler.", confidence:5 },
-  { id:"s10",date:"2026-02-21", sport:"NBA", betType:"Spread", team:"76ers +6.5", odds:-110, stake:55, outcome:"Loss", payout:0, sportsbook:"BetMGM", notes:"Embiid sat out. Should have waited.", confidence:2 },
-  { id:"s11",date:"2026-02-20", sport:"NCAA BB", betType:"Moneyline", team:"Duke", odds:-180, stake:35, outcome:"Win", payout:54.44, sportsbook:"Caesars", notes:"Duke at home in Cameron.", confidence:4 },
-  { id:"s12",date:"2026-02-18", sport:"NFL", betType:"Prop", team:"Lamar Jackson O1.5 pass TDs", odds:100, stake:50, outcome:"Win", payout:100, sportsbook:"FanDuel", notes:"Good value at even odds.", confidence:4 },
-  { id:"s13",date:"2026-02-15", sport:"NBA", betType:"Moneyline", team:"Thunder", odds:-140, stake:70, outcome:"Win", payout:120, sportsbook:"DraftKings", notes:"SGA on fire.", confidence:5 },
-  { id:"s14",date:"2026-02-12", sport:"Tennis", betType:"Moneyline", team:"Sinner", odds:-160, stake:40, outcome:"Loss", payout:0, sportsbook:"Bet365", notes:"Upset special.", confidence:3 },
-  { id:"s15",date:"2026-02-10", sport:"NBA", betType:"Over/Under", team:"Heat/Pacers O228", odds:-110, stake:55, outcome:"Win", payout:105, sportsbook:"FanDuel", notes:"Classic over spot.", confidence:4 },
-  { id:"s16",date:"2026-02-08", sport:"NHL", betType:"Spread", team:"Oilers -1.5", odds:140, stake:25, outcome:"Loss", payout:0, sportsbook:"BetMGM", notes:"McDavid went cold.", confidence:2 },
-  { id:"s17",date:"2026-02-05", sport:"NBA", betType:"Live Bet", team:"Mavericks ML (in-game)", odds:180, stake:30, outcome:"Win", payout:84, sportsbook:"DraftKings", notes:"Luka went off in Q3.", confidence:3 },
-  { id:"s18",date:"2026-02-02", sport:"Soccer", betType:"Over/Under", team:"Man City/Liverpool O2.5", odds:-130, stake:65, outcome:"Win", payout:115, sportsbook:"Caesars", notes:"Derby match. Goals guaranteed.", confidence:5 },
-  { id:"s19",date:"2026-01-30", sport:"NBA", betType:"Spread", team:"Cavaliers -3", odds:-110, stake:50, outcome:"Win", payout:95.45, sportsbook:"FanDuel", notes:"Cavs rolling at home.", confidence:4 },
-  { id:"s20",date:"2026-01-28", sport:"NFL", betType:"Moneyline", team:"Bills", odds:-130, stake:65, outcome:"Loss", payout:0, sportsbook:"DraftKings", notes:"Bills choked in the 4th.", confidence:4 },
-  { id:"s21",date:"2026-01-25", sport:"NBA", betType:"Parlay", team:"2-leg: Celtics ML / Warriors ML", odds:260, stake:25, outcome:"Win", payout:90, sportsbook:"BetMGM", notes:"Both heavy favorites at home.", confidence:4 },
-  { id:"s22",date:"2026-01-22", sport:"NHL", betType:"Moneyline", team:"Panthers", odds:-145, stake:45, outcome:"Win", payout:76.03, sportsbook:"Bet365", notes:"Panthers defense is elite.", confidence:4 },
-  { id:"s23",date:"2026-01-19", sport:"Soccer", betType:"Moneyline", team:"Real Madrid", odds:-110, stake:55, outcome:"Win", payout:105, sportsbook:"DraftKings", notes:"La Liga dominance.", confidence:4 },
-  { id:"s24",date:"2026-01-15", sport:"NBA", betType:"Prop", team:"LeBron O7.5 assists", odds:110, stake:30, outcome:"Loss", payout:0, sportsbook:"FanDuel", notes:"LeBron was in scoring mode.", confidence:3 },
-  { id:"s25",date:"2026-01-12", sport:"NFL", betType:"Spread", team:"Eagles -7", odds:-110, stake:60, outcome:"Win", payout:114.55, sportsbook:"Caesars", notes:"Eagles dominated at home.", confidence:5 },
-  { id:"s26",date:"2026-01-08", sport:"NBA", betType:"Moneyline", team:"Nuggets", odds:-155, stake:50, outcome:"Win", payout:82.26, sportsbook:"DraftKings", notes:"Altitude advantage.", confidence:4 },
-  { id:"s27",date:"2026-01-05", sport:"NCAA BB", betType:"Spread", team:"UConn -5.5", odds:-110, stake:40, outcome:"Loss", payout:0, sportsbook:"BetMGM", notes:"UConn coasted.", confidence:3 },
-  { id:"s28",date:"2026-01-02", sport:"NHL", betType:"Over/Under", team:"Rangers/Bruins O5.5", odds:105, stake:35, outcome:"Win", payout:71.75, sportsbook:"FanDuel", notes:"Both teams scoring a ton.", confidence:3 },
-  { id:"s29",date:"2025-12-30", sport:"NBA", betType:"Moneyline", team:"Bucks", odds:-170, stake:85, outcome:"Win", payout:135, sportsbook:"DraftKings", notes:"Giannis healthy.", confidence:5 },
-  { id:"s30",date:"2025-12-28", sport:"NFL", betType:"Moneyline", team:"Ravens", odds:-200, stake:100, outcome:"Win", payout:150, sportsbook:"FanDuel", notes:"Lamar MVP season.", confidence:5 },
-  { id:"s31",date:"2025-12-25", sport:"NBA", betType:"Spread", team:"Lakers +3", odds:-110, stake:55, outcome:"Loss", payout:0, sportsbook:"BetMGM", notes:"Christmas Day trap.", confidence:3 },
-  { id:"s32",date:"2025-12-22", sport:"Soccer", betType:"Moneyline", team:"Barcelona", odds:-135, stake:50, outcome:"Win", payout:87.04, sportsbook:"Caesars", notes:"Barca flying.", confidence:4 },
-  { id:"s33",date:"2025-12-19", sport:"NHL", betType:"Moneyline", team:"Avalanche", odds:-125, stake:40, outcome:"Loss", payout:0, sportsbook:"Bet365", notes:"Avs missing key players.", confidence:2 },
-  { id:"s34",date:"2025-12-16", sport:"NBA", betType:"Over/Under", team:"Suns/Kings O232", odds:-110, stake:50, outcome:"Win", payout:95.45, sportsbook:"FanDuel", notes:"Two fastest paced teams.", confidence:4 },
-  { id:"s35",date:"2025-12-12", sport:"NCAA FB", betType:"Spread", team:"Ohio State -3.5", odds:-110, stake:60, outcome:"Win", payout:114.55, sportsbook:"DraftKings", notes:"Playoff game, OSU motivated.", confidence:4 },
-  { id:"s36",date:"2025-12-08", sport:"NFL", betType:"Parlay", team:"3-leg: Chiefs / Bengals / Bills", odds:600, stake:15, outcome:"Loss", payout:0, sportsbook:"FanDuel", notes:"Bengals let me down.", confidence:2 },
-  { id:"s37",date:"2025-12-05", sport:"NBA", betType:"Moneyline", team:"Wolves", odds:120, stake:40, outcome:"Win", payout:88, sportsbook:"BetMGM", notes:"Wolves undervalued.", confidence:3 },
-  { id:"s38",date:"2025-12-02", sport:"MMA", betType:"Moneyline", team:"Alex Pereira", odds:-175, stake:70, outcome:"Win", payout:110, sportsbook:"DraftKings", notes:"Pereira's power too much.", confidence:4 },
+  { id:"s1", date:"2026-02-28", sport:"NBA", betType:"Spread", team:"Celtics -4.5", odds:-110, closingOdds:-125, stake:50, outcome:"Win", payout:95.45, sportsbook:"FanDuel", notes:"Celtics at home, strong ATS record this month.", confidence:4 },
+  { id:"s2", date:"2026-02-27", sport:"NFL", betType:"Moneyline", team:"Chiefs", odds:-150, closingOdds:-165, stake:75, outcome:"Win", payout:125, sportsbook:"DraftKings", notes:"Mahomes in prime form.", confidence:5 },
+  { id:"s3", date:"2026-02-27", sport:"NBA", betType:"Over/Under", team:"Lakers/Warriors O224.5", odds:-105, closingOdds:-115, stake:40, outcome:"Loss", payout:0, sportsbook:"BetMGM", notes:"Pace was slower than expected.", confidence:3 },
+  { id:"s4", date:"2026-02-26", sport:"NHL", betType:"Moneyline", team:"Maple Leafs", odds:130, closingOdds:115, stake:30, outcome:"Win", payout:69, sportsbook:"Bet365", notes:"Value play — Leafs underrated on the road.", confidence:3 },
+  { id:"s5", date:"2026-02-26", sport:"NBA", betType:"Parlay", team:"3-leg: Bucks ML / Nuggets -3 / Knicks ML", odds:550, closingOdds:null, stake:20, outcome:"Loss", payout:0, sportsbook:"FanDuel", notes:"Knicks blew the lead in Q4.", confidence:2 },
+  { id:"s6", date:"2026-02-25", sport:"Soccer", betType:"Moneyline", team:"Arsenal", odds:-120, closingOdds:-140, stake:60, outcome:"Win", payout:110, sportsbook:"DraftKings", notes:"Arsenal dominant at home.", confidence:5 },
+  { id:"s7", date:"2026-02-24", sport:"NBA", betType:"Prop", team:"Jokic O11.5 rebounds", odds:-115, closingOdds:-135, stake:45, outcome:"Win", payout:84.13, sportsbook:"Caesars", notes:"Jokic averaging 13.2 reb last 10.", confidence:4 },
+  { id:"s8", date:"2026-02-23", sport:"MLB", betType:"Futures", team:"Dodgers to win WS", odds:450, closingOdds:null, stake:25, outcome:"Pending", payout:0, sportsbook:"FanDuel", notes:"Stacked roster again.", confidence:3 },
+  { id:"s9", date:"2026-02-22", sport:"MMA", betType:"Moneyline", team:"Islam Makhachev", odds:-200, closingOdds:-225, stake:100, outcome:"Win", payout:150, sportsbook:"DraftKings", notes:"Dominant grappler.", confidence:5 },
+  { id:"s10",date:"2026-02-21", sport:"NBA", betType:"Spread", team:"76ers +6.5", odds:-110, closingOdds:-105, stake:55, outcome:"Loss", payout:0, sportsbook:"BetMGM", notes:"Embiid sat out. Should have waited.", confidence:2 },
+  { id:"s11",date:"2026-02-20", sport:"NCAA BB", betType:"Moneyline", team:"Duke", odds:-180, closingOdds:-195, stake:35, outcome:"Win", payout:54.44, sportsbook:"Caesars", notes:"Duke at home in Cameron.", confidence:4 },
+  { id:"s12",date:"2026-02-18", sport:"NFL", betType:"Prop", team:"Lamar Jackson O1.5 pass TDs", odds:100, closingOdds:-110, stake:50, outcome:"Win", payout:100, sportsbook:"FanDuel", notes:"Good value at even odds.", confidence:4 },
+  { id:"s13",date:"2026-02-15", sport:"NBA", betType:"Moneyline", team:"Thunder", odds:-140, closingOdds:-160, stake:70, outcome:"Win", payout:120, sportsbook:"DraftKings", notes:"SGA on fire.", confidence:5 },
+  { id:"s14",date:"2026-02-12", sport:"Tennis", betType:"Moneyline", team:"Sinner", odds:-160, closingOdds:-150, stake:40, outcome:"Loss", payout:0, sportsbook:"Bet365", notes:"Upset special.", confidence:3 },
+  { id:"s15",date:"2026-02-10", sport:"NBA", betType:"Over/Under", team:"Heat/Pacers O228", odds:-110, closingOdds:-120, stake:55, outcome:"Win", payout:105, sportsbook:"FanDuel", notes:"Classic over spot.", confidence:4 },
+  { id:"s16",date:"2026-02-08", sport:"NHL", betType:"Spread", team:"Oilers -1.5", odds:140, closingOdds:150, stake:25, outcome:"Loss", payout:0, sportsbook:"BetMGM", notes:"McDavid went cold.", confidence:2 },
+  { id:"s17",date:"2026-02-05", sport:"NBA", betType:"Live Bet", team:"Mavericks ML (in-game)", odds:180, closingOdds:null, stake:30, outcome:"Win", payout:84, sportsbook:"DraftKings", notes:"Luka went off in Q3.", confidence:3 },
+  { id:"s18",date:"2026-02-02", sport:"Soccer", betType:"Over/Under", team:"Man City/Liverpool O2.5", odds:-130, closingOdds:-145, stake:65, outcome:"Win", payout:115, sportsbook:"Caesars", notes:"Derby match. Goals guaranteed.", confidence:5 },
+  { id:"s19",date:"2026-01-30", sport:"NBA", betType:"Spread", team:"Cavaliers -3", odds:-110, closingOdds:-120, stake:50, outcome:"Win", payout:95.45, sportsbook:"FanDuel", notes:"Cavs rolling at home.", confidence:4 },
+  { id:"s20",date:"2026-01-28", sport:"NFL", betType:"Moneyline", team:"Bills", odds:-130, closingOdds:-125, stake:65, outcome:"Loss", payout:0, sportsbook:"DraftKings", notes:"Bills choked in the 4th.", confidence:4 },
+  { id:"s21",date:"2026-01-25", sport:"NBA", betType:"Parlay", team:"2-leg: Celtics ML / Warriors ML", odds:260, closingOdds:null, stake:25, outcome:"Win", payout:90, sportsbook:"BetMGM", notes:"Both heavy favorites at home.", confidence:4 },
+  { id:"s22",date:"2026-01-22", sport:"NHL", betType:"Moneyline", team:"Panthers", odds:-145, closingOdds:-160, stake:45, outcome:"Win", payout:76.03, sportsbook:"Bet365", notes:"Panthers defense is elite.", confidence:4 },
+  { id:"s23",date:"2026-01-19", sport:"Soccer", betType:"Moneyline", team:"Real Madrid", odds:-110, closingOdds:-130, stake:55, outcome:"Win", payout:105, sportsbook:"DraftKings", notes:"La Liga dominance.", confidence:4 },
+  { id:"s24",date:"2026-01-15", sport:"NBA", betType:"Prop", team:"LeBron O7.5 assists", odds:110, closingOdds:120, stake:30, outcome:"Loss", payout:0, sportsbook:"FanDuel", notes:"LeBron was in scoring mode.", confidence:3 },
+  { id:"s25",date:"2026-01-12", sport:"NFL", betType:"Spread", team:"Eagles -7", odds:-110, closingOdds:-130, stake:60, outcome:"Win", payout:114.55, sportsbook:"Caesars", notes:"Eagles dominated at home.", confidence:5 },
+  { id:"s26",date:"2026-01-08", sport:"NBA", betType:"Moneyline", team:"Nuggets", odds:-155, closingOdds:-170, stake:50, outcome:"Win", payout:82.26, sportsbook:"DraftKings", notes:"Altitude advantage.", confidence:4 },
+  { id:"s27",date:"2026-01-05", sport:"NCAA BB", betType:"Spread", team:"UConn -5.5", odds:-110, closingOdds:-108, stake:40, outcome:"Loss", payout:0, sportsbook:"BetMGM", notes:"UConn coasted.", confidence:3 },
+  { id:"s28",date:"2026-01-02", sport:"NHL", betType:"Over/Under", team:"Rangers/Bruins O5.5", odds:105, closingOdds:-105, stake:35, outcome:"Win", payout:71.75, sportsbook:"FanDuel", notes:"Both teams scoring a ton.", confidence:3 },
+  { id:"s29",date:"2025-12-30", sport:"NBA", betType:"Moneyline", team:"Bucks", odds:-170, closingOdds:-190, stake:85, outcome:"Win", payout:135, sportsbook:"DraftKings", notes:"Giannis healthy.", confidence:5 },
+  { id:"s30",date:"2025-12-28", sport:"NFL", betType:"Moneyline", team:"Ravens", odds:-200, closingOdds:-220, stake:100, outcome:"Win", payout:150, sportsbook:"FanDuel", notes:"Lamar MVP season.", confidence:5 },
+  { id:"s31",date:"2025-12-25", sport:"NBA", betType:"Spread", team:"Lakers +3", odds:-110, closingOdds:-108, stake:55, outcome:"Loss", payout:0, sportsbook:"BetMGM", notes:"Christmas Day trap.", confidence:3 },
+  { id:"s32",date:"2025-12-22", sport:"Soccer", betType:"Moneyline", team:"Barcelona", odds:-135, closingOdds:-155, stake:50, outcome:"Win", payout:87.04, sportsbook:"Caesars", notes:"Barca flying.", confidence:4 },
+  { id:"s33",date:"2025-12-19", sport:"NHL", betType:"Moneyline", team:"Avalanche", odds:-125, closingOdds:-118, stake:40, outcome:"Loss", payout:0, sportsbook:"Bet365", notes:"Avs missing key players.", confidence:2 },
+  { id:"s34",date:"2025-12-16", sport:"NBA", betType:"Over/Under", team:"Suns/Kings O232", odds:-110, closingOdds:-125, stake:50, outcome:"Win", payout:95.45, sportsbook:"FanDuel", notes:"Two fastest paced teams.", confidence:4 },
+  { id:"s35",date:"2025-12-12", sport:"NCAA FB", betType:"Spread", team:"Ohio State -3.5", odds:-110, closingOdds:-120, stake:60, outcome:"Win", payout:114.55, sportsbook:"DraftKings", notes:"Playoff game, OSU motivated.", confidence:4 },
+  { id:"s36",date:"2025-12-08", sport:"NFL", betType:"Parlay", team:"3-leg: Chiefs / Bengals / Bills", odds:600, closingOdds:null, stake:15, outcome:"Loss", payout:0, sportsbook:"FanDuel", notes:"Bengals let me down.", confidence:2 },
+  { id:"s37",date:"2025-12-05", sport:"NBA", betType:"Moneyline", team:"Wolves", odds:120, closingOdds:105, stake:40, outcome:"Win", payout:88, sportsbook:"BetMGM", notes:"Wolves undervalued.", confidence:3 },
+  { id:"s38",date:"2025-12-02", sport:"MMA", betType:"Moneyline", team:"Alex Pereira", odds:-175, closingOdds:-200, stake:70, outcome:"Win", payout:110, sportsbook:"DraftKings", notes:"Pereira's power too much.", confidence:4 },
 ];
 
 // ── Helpers ──
@@ -65,6 +65,18 @@ const fmt = n => new Intl.NumberFormat("en-US",{style:"currency",currency:"USD"}
 const fmtPct = n => (n*100).toFixed(1)+"%";
 const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 const calcPayout = (stake,odds) => { const s=parseFloat(stake),o=parseInt(odds); if(isNaN(s)||isNaN(o))return 0; return o>0?s+s*(o/100):s+s*(100/Math.abs(o)); };
+
+// Convert American odds to implied probability
+const oddsToProb = (odds) => { const o=parseInt(odds); if(isNaN(o))return null; return o>0 ? 100/(o+100) : Math.abs(o)/(Math.abs(o)+100); };
+
+// Calculate CLV% — positive means you beat the closing line
+const calcCLV = (openOdds, closingOdds) => {
+  if(!openOdds || !closingOdds) return null;
+  const openProb = oddsToProb(openOdds);
+  const closeProb = oddsToProb(closingOdds);
+  if(!openProb || !closeProb) return null;
+  return ((closeProb - openProb) / openProb) * 100;
+};
 
 // ── Theme: Refined, warm, finance-app ──
 const T = {
@@ -236,6 +248,20 @@ export default function Stakebook() {
     const acw=w.length>0?w.reduce((a,b)=>a+(b.confidence||3),0)/w.length:0;
     const acl=l.length>0?l.reduce((a,b)=>a+(b.confidence||3),0)/l.length:0;
 
+    // CLV analytics
+    const clvBets=set.filter(b=>b.closingOdds!=null && b.closingOdds!==null);
+    const clvValues=clvBets.map(b=>({...b,clv:calcCLV(b.odds,b.closingOdds)})).filter(b=>b.clv!==null);
+    const avgCLV=clvValues.length>0?clvValues.reduce((a,b)=>a+b.clv,0)/clvValues.length:0;
+    const posCLV=clvValues.filter(b=>b.clv>0);
+    const negCLV=clvValues.filter(b=>b.clv<=0);
+    const posCLVwr=posCLV.length>0?posCLV.filter(b=>b.outcome==="Win").length/posCLV.length:0;
+    const negCLVwr=negCLV.length>0?negCLV.filter(b=>b.outcome==="Win").length/negCLV.length:0;
+    // CLV over time
+    const clvTimeline=clvValues.sort((a,b)=>new Date(a.date)-new Date(b.date)).map(b=>({date:b.date,clv:Math.round(calcCLV(b.odds,b.closingOdds)*100)/100}));
+    // CLV by sport
+    const clvBySport={};
+    clvValues.forEach(b=>{if(!clvBySport[b.sport])clvBySport[b.sport]={sum:0,n:0};clvBySport[b.sport].sum+=b.clv;clvBySport[b.sport].n++;});
+
     const today="2026-03-01";
     const tStk=bets.filter(b=>b.date===today).reduce((a,b)=>a+b.stake,0);
     const now=new Date(2026,2,1);const wa=new Date(now.getTime()-7*864e5);
@@ -249,14 +275,14 @@ export default function Stakebook() {
     const avg=stk/(set.length||1);if(avg>settings.bankroll*0.1)hp-=10;
     hp=Math.max(0,Math.min(100,hp));
 
-    return{total:filtered.length,setN:set.length,w:w.length,l:l.length,push:set.filter(b=>b.outcome==="Push").length,pend:filtered.filter(b=>b.outcome==="Pending").length,stk,pay,net,roi,wr,pNet,pRoi,pWr,pStk,bySport,byType,byBook,timeline,cs,mw,ml,acw,acl,tStk,wStk,mStk,hp,avg};
+    return{total:filtered.length,setN:set.length,w:w.length,l:l.length,push:set.filter(b=>b.outcome==="Push").length,pend:filtered.filter(b=>b.outcome==="Pending").length,stk,pay,net,roi,wr,pNet,pRoi,pWr,pStk,bySport,byType,byBook,timeline,cs,mw,ml,acw,acl,tStk,wStk,mStk,hp,avg,avgCLV,posCLVwr,negCLVwr,clvTimeline,clvBySport,clvCount:clvValues.length,posCLVcount:posCLV.length};
   },[filtered,prevBets,bets,settings]);
 
-  const emptyBet={date:new Date().toISOString().slice(0,10),sport:"NBA",betType:"Moneyline",team:"",odds:"",stake:"",outcome:"Pending",payout:"",sportsbook:"FanDuel",notes:"",confidence:3};
+  const emptyBet={date:new Date().toISOString().slice(0,10),sport:"NBA",betType:"Moneyline",team:"",odds:"",closingOdds:"",stake:"",outcome:"Pending",payout:"",sportsbook:"FanDuel",notes:"",confidence:3};
 
   const saveBet=bet=>{
     const pay=bet.outcome==="Win"?calcPayout(bet.stake,bet.odds):bet.outcome==="Push"?parseFloat(bet.stake):0;
-    const fb={...bet,stake:parseFloat(bet.stake)||0,odds:parseInt(bet.odds)||0,payout:bet.outcome==="Pending"?0:pay};
+    const fb={...bet,stake:parseFloat(bet.stake)||0,odds:parseInt(bet.odds)||0,closingOdds:bet.closingOdds?parseInt(bet.closingOdds):null,payout:bet.outcome==="Pending"?0:pay};
     if(editing){setBets(p=>p.map(b=>b.id===editing.id?{...fb,id:editing.id}:b));setEditing(null);}
     else setBets(p=>[{...fb,id:uid()},...p]);
     setShowAdd(false);
@@ -369,13 +395,15 @@ export default function Stakebook() {
 
             <div style={{...S.card,marginTop:16}}>
               <div style={S.fb}><div style={S.cTitle}>Recent Bets <span style={{fontFamily:T.body,fontSize:12,fontWeight:400,color:T.light,fontStyle:"normal"}}>({filtered.length})</span></div><button style={{...S.btn("ghost"),fontSize:12,padding:"6px 12px"}} onClick={()=>setTab("bets")}>View All →</button></div>
-              <div style={{overflowX:"auto"}}><table style={S.table}><thead><tr>{["Date","Bet","Sport","Type","Odds","Stake","Result","P/L",""].map(h=><th key={h} style={S.th}>{h}</th>)}</tr></thead><tbody>
-                {filtered.slice(0,7).map(b=>{const pl=b.outcome==="Pending"?null:(b.payout||0)-b.stake;return(
+              <div style={{overflowX:"auto"}}><table style={S.table}><thead><tr>{["Date","Bet","Sport","Type","Odds","Stake","Result","P/L","CLV",""].map(h=><th key={h} style={S.th}>{h}</th>)}</tr></thead><tbody>
+                {filtered.slice(0,7).map(b=>{const pl=b.outcome==="Pending"?null:(b.payout||0)-b.stake;const clv=calcCLV(b.odds,b.closingOdds);return(
                   <tr key={b.id} style={{cursor:"pointer"}} onClick={()=>setViewing(b)}>
                     <td style={S.td}>{b.date.slice(5)}</td><td style={{...S.td,fontWeight:500,maxWidth:180,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{b.team}</td>
                     <td style={S.td}><span style={S.tag(T.blue,T.blueBg)}>{b.sport}</span></td><td style={{...S.td,color:T.sub}}>{b.betType}</td>
                     <td style={S.td}>{b.odds>0?`+${b.odds}`:b.odds}</td><td style={S.td}>{fmt(b.stake)}</td><td style={S.td}><OTag o={b.outcome}/></td>
-                    <td style={{...S.td,fontWeight:600,color:pl===null?T.light:pl>=0?T.brand:T.red}}>{pl===null?"—":fmt(pl)}</td><td style={S.td}><Stars v={b.confidence} sz={11}/></td>
+                    <td style={{...S.td,fontWeight:600,color:pl===null?T.light:pl>=0?T.brand:T.red}}>{pl===null?"—":fmt(pl)}</td>
+                    <td style={{...S.td,fontWeight:600,fontSize:12,color:clv===null?T.light:clv>0?T.brand:clv<0?T.red:T.sub}}>{clv===null?"—":clv>0?`+${clv.toFixed(1)}%`:`${clv.toFixed(1)}%`}</td>
+                    <td style={S.td}><Stars v={b.confidence} sz={11}/></td>
                   </tr>);})}
               </tbody></table></div>
             </div>
@@ -395,20 +423,23 @@ export default function Stakebook() {
               <span><strong style={{color:T.red}}>{filtered.filter(b=>b.outcome==="Loss").length}</strong> losses</span>
               <span><strong style={{color:T.gold}}>{filtered.filter(b=>b.outcome==="Pending").length}</strong> pending</span>
             </div>
-            <div style={S.card}><div style={{overflowX:"auto"}}><table style={S.table}><thead><tr>{["Date","Bet","Sport","Type","Book","Odds","Stake","Result","P/L","Conf.",""].map(h=><th key={h} style={S.th}>{h}</th>)}</tr></thead><tbody>
-              {filtered.map(b=>{const pl=b.outcome==="Pending"?null:(b.payout||0)-b.stake;return(
+            <div style={S.card}><div style={{overflowX:"auto"}}><table style={S.table}><thead><tr>{["Date","Bet","Sport","Type","Book","Odds","Close","CLV","Stake","Result","P/L",""].map(h=><th key={h} style={S.th}>{h}</th>)}</tr></thead><tbody>
+              {filtered.map(b=>{const pl=b.outcome==="Pending"?null:(b.payout||0)-b.stake;const clv=calcCLV(b.odds,b.closingOdds);return(
                 <tr key={b.id}>
                   <td style={S.td}>{b.date}</td><td style={{...S.td,fontWeight:500,maxWidth:200,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{b.team}</td>
                   <td style={S.td}><span style={S.tag(T.blue,T.blueBg)}>{b.sport}</span></td><td style={{...S.td,color:T.sub}}>{b.betType}</td><td style={{...S.td,fontSize:12}}>{b.sportsbook}</td>
-                  <td style={S.td}>{b.odds>0?`+${b.odds}`:b.odds}</td><td style={S.td}>{fmt(b.stake)}</td><td style={S.td}><OTag o={b.outcome}/></td>
-                  <td style={{...S.td,fontWeight:600,color:pl===null?T.light:pl>=0?T.brand:T.red}}>{pl===null?"—":fmt(pl)}</td><td style={S.td}><Stars v={b.confidence} sz={11}/></td>
+                  <td style={S.td}>{b.odds>0?`+${b.odds}`:b.odds}</td>
+                  <td style={{...S.td,color:T.sub}}>{b.closingOdds?b.closingOdds>0?`+${b.closingOdds}`:b.closingOdds:"—"}</td>
+                  <td style={{...S.td,fontWeight:600,fontSize:12,color:clv===null?T.light:clv>0?T.brand:clv<0?T.red:T.sub}}>{clv===null?"—":clv>0?`+${clv.toFixed(1)}%`:`${clv.toFixed(1)}%`}</td>
+                  <td style={S.td}>{fmt(b.stake)}</td><td style={S.td}><OTag o={b.outcome}/></td>
+                  <td style={{...S.td,fontWeight:600,color:pl===null?T.light:pl>=0?T.brand:T.red}}>{pl===null?"—":fmt(pl)}</td>
                   <td style={{...S.td,whiteSpace:"nowrap"}}>
                     <button style={{background:"none",border:"none",cursor:"pointer",padding:4}} onClick={()=>setViewing(b)}><I n="eye" s={14} c={T.sub}/></button>
                     <button style={{background:"none",border:"none",cursor:"pointer",padding:4}} onClick={()=>{setEditing(b);setShowAdd(true);}}><I n="edit" s={14} c={T.sub}/></button>
                     <button style={{background:"none",border:"none",cursor:"pointer",padding:4}} onClick={()=>delBet(b.id)}><I n="trash" s={14} c={T.red}/></button>
                   </td>
                 </tr>);})}
-              {filtered.length===0&&<tr><td colSpan={11} style={{...S.td,textAlign:"center",padding:40,color:T.light}}>No bets in this period</td></tr>}
+              {filtered.length===0&&<tr><td colSpan={12} style={{...S.td,textAlign:"center",padding:40,color:T.light}}>No bets in this period</td></tr>}
             </tbody></table></div></div>
           </div>
         )}
@@ -423,8 +454,50 @@ export default function Stakebook() {
             <div style={S.g4}>
               <div style={S.stat()}><span style={S.sLabel}>Avg. Stake</span><span style={{...S.sVal(),fontSize:24}}>{fmt(A.avg)}</span></div>
               <div style={S.stat()}><span style={S.sLabel}>Current Streak</span><span style={{...S.sVal(A.cs>=0?T.brand:T.red),fontSize:24}}>{A.cs>0?`${A.cs}W 🔥`:A.cs<0?`${Math.abs(A.cs)}L`:"—"}</span></div>
-              <div style={S.stat()}><span style={S.sLabel}>Best Win Streak</span><span style={{...S.sVal(T.brand),fontSize:24}}>{A.mw}</span></div>
-              <div style={S.stat()}><span style={S.sLabel}>Worst Loss Streak</span><span style={{...S.sVal(T.red),fontSize:24}}>{A.ml}</span></div>
+              <div style={S.stat()}><span style={S.sLabel}>Avg. CLV</span><span style={{...S.sVal(A.avgCLV>0?T.brand:A.avgCLV<0?T.red:T.sub),fontSize:24}}>{A.clvCount>0?(A.avgCLV>0?"+":"")+A.avgCLV.toFixed(2)+"%":"—"}</span><span style={S.sSub}>{A.clvCount} bets tracked</span></div>
+              <div style={S.stat()}><span style={S.sLabel}>+CLV Win Rate</span><span style={{...S.sVal(T.brand),fontSize:24}}>{A.posCLVcount>0?fmtPct(A.posCLVwr):"—"}</span><span style={S.sSub}>vs {A.clvCount-A.posCLVcount>0?fmtPct(A.negCLVwr):"—"} on −CLV bets</span></div>
+            </div>
+
+            {/* CLV Deep Dive */}
+            <div style={{...S.card,marginTop:16,border:`1.5px solid ${T.brand}22`}}>
+              <div style={{...S.fb,marginBottom:4}}><div style={S.cTitle}>✦ Closing Line Value Analysis</div><span style={S.tag(T.brand,T.brandLight)}>PRO</span></div>
+              <p style={{fontSize:12,color:T.sub,marginBottom:20,lineHeight:1.6}}>CLV measures whether you're getting better odds than the market's final price. Consistently positive CLV is the strongest indicator of long-term profitability — it means you're finding value the market corrects toward.</p>
+              <div style={S.g2}>
+                <div>
+                  <div style={{fontSize:12,fontWeight:600,color:T.sub,textTransform:"uppercase",letterSpacing:"0.06em",marginBottom:12}}>CLV Over Time</div>
+                  {A.clvTimeline.length>0?(<ResponsiveContainer width="100%" height={200}>
+                    <BarChart data={A.clvTimeline}><CartesianGrid strokeDasharray="3 3" stroke={T.border} vertical={false}/>
+                    <XAxis dataKey="date" tick={{fontSize:10,fill:T.sub}} tickFormatter={v=>v.slice(5)} axisLine={false} tickLine={false}/>
+                    <YAxis tick={{fontSize:10,fill:T.sub}} tickFormatter={v=>`${v}%`} axisLine={false} tickLine={false} width={40}/>
+                    <Tooltip formatter={v=>[`${v>0?"+":""}${v.toFixed(2)}%`,"CLV"]} contentStyle={{borderRadius:10,border:`1px solid ${T.border}`,fontSize:12,fontFamily:T.body}}/>
+                    <Bar dataKey="clv" radius={[3,3,0,0]}>{A.clvTimeline.map((d,i)=><Cell key={i} fill={d.clv>=0?T.brand:T.red} opacity={0.8}/>)}</Bar>
+                    </BarChart></ResponsiveContainer>):<div style={{height:200,display:"flex",alignItems:"center",justifyContent:"center",color:T.light}}>No CLV data — add closing odds to your bets</div>}
+                </div>
+                <div>
+                  <div style={{fontSize:12,fontWeight:600,color:T.sub,textTransform:"uppercase",letterSpacing:"0.06em",marginBottom:12}}>CLV by Sport</div>
+                  {Object.keys(A.clvBySport).length>0?(
+                    <div style={{display:"flex",flexDirection:"column",gap:10}}>
+                      {Object.entries(A.clvBySport).sort((a,b)=>(b[1].sum/b[1].n)-(a[1].sum/a[1].n)).map(([sp,d])=>{
+                        const avg=d.sum/d.n;const pct=Math.min(Math.abs(avg)/5,1);
+                        return(<div key={sp}>
+                          <div style={{...S.fb,marginBottom:4}}><span style={{fontSize:13,fontWeight:500}}>{sp}</span><span style={{fontSize:13,fontWeight:700,color:avg>0?T.brand:avg<0?T.red:T.sub}}>{avg>0?"+":""}{avg.toFixed(2)}%</span></div>
+                          <div style={{height:5,background:T.bg,borderRadius:3,overflow:"hidden"}}><div style={{height:"100%",width:`${pct*100}%`,background:avg>=0?T.brand:T.red,borderRadius:3,transition:"width 0.5s"}}/></div>
+                          <div style={{fontSize:10,color:T.light,marginTop:2}}>{d.n} bets</div>
+                        </div>);
+                      })}
+                    </div>
+                  ):<div style={{height:200,display:"flex",alignItems:"center",justifyContent:"center",color:T.light}}>No CLV data</div>}
+                </div>
+              </div>
+              <div style={{marginTop:16,padding:14,background:T.bg,borderRadius:T.rs,borderLeft:`3px solid ${A.avgCLV>0?T.brand:A.avgCLV<0?T.red:T.blue}`}}>
+                <span style={{fontSize:13,lineHeight:1.6,color:T.sub}}>
+                  {A.avgCLV>1?"✦ Excellent edge — you're consistently beating the market. This is what sharp bettors look like.":
+                   A.avgCLV>0?"✦ Positive CLV — you're finding value. Keep tracking to confirm the trend over a larger sample.":
+                   A.avgCLV>-1?"⚠ Slightly negative CLV — close to break-even against the market. Focus on getting your bets in earlier.":
+                   A.clvCount>0?"⚠ Negative CLV — you're consistently getting worse odds than closing. Try shopping lines across books and betting earlier.":
+                   "Start adding closing odds to your bets to unlock CLV analysis. Check the closing line right before game time and enter it after your bet settles."}
+                </span>
+              </div>
             </div>
             <div style={{...S.g2,marginTop:16}}>
               <div style={S.card}>
@@ -541,6 +614,11 @@ export default function Stakebook() {
               <div key={x.l}><div style={S.label}>{x.l}</div><div style={{fontSize:15,fontWeight:500}}>{x.v}</div></div>
             ))}
           </div>
+          {viewing.closingOdds&&(()=>{const clv=calcCLV(viewing.odds,viewing.closingOdds);return(
+            <div style={{marginTop:16,display:"flex",gap:20}}>
+              <div><div style={S.label}>Closing Odds</div><div style={{fontSize:15,fontWeight:500}}>{viewing.closingOdds>0?`+${viewing.closingOdds}`:viewing.closingOdds}</div></div>
+              <div><div style={S.label}>CLV</div><div style={{fontSize:18,fontWeight:700,fontFamily:T.display,fontStyle:"italic",color:clv>0?T.brand:clv<0?T.red:T.sub}}>{clv>0?"+":""}{clv.toFixed(2)}%</div></div>
+            </div>);})()}
           <div style={{marginTop:16}}><div style={S.label}>Selection</div><div style={{fontSize:16,fontWeight:600}}>{viewing.team}</div></div>
           <div style={{marginTop:16,display:"flex",gap:24}}>
             <div><div style={S.label}>Result</div><OTag o={viewing.outcome}/></div>
@@ -559,7 +637,7 @@ export default function Stakebook() {
 }
 
 function BetModal({bet,isEdit,settings,onSave,onClose}){
-  const [f,setF]=useState({...bet,odds:String(bet.odds||""),stake:String(bet.stake||"")});
+  const [f,setF]=useState({...bet,odds:String(bet.odds||""),closingOdds:String(bet.closingOdds||""),stake:String(bet.stake||"")});
   const [sw,setSw]=useState("");
   const up=(k,v)=>{setF(p=>({...p,[k]:v}));if(k==="stake"){const s=parseFloat(v);setSw(s>settings.maxStake?`Exceeds max stake of ${fmt(settings.maxStake)}`:"");}};
   const pp=calcPayout(f.stake,f.odds);
@@ -576,6 +654,8 @@ function BetModal({bet,isEdit,settings,onSave,onClose}){
         <div><label style={S.label}>Stake ($)</label><input type="number" style={{...S.input,borderColor:sw?T.orange:T.border}} placeholder="0.00" value={f.stake} onChange={e=>up("stake",e.target.value)}/>{sw&&<div style={{fontSize:11,color:T.orange,marginTop:4}}>⚠️ {sw}</div>}</div>
         <div><label style={S.label}>Outcome</label><select style={S.select} value={f.outcome} onChange={e=>up("outcome",e.target.value)}>{OUTCOMES.map(o=><option key={o}>{o}</option>)}</select></div>
         <div><label style={S.label}>Potential Payout</label><div style={{padding:"10px 12px",background:T.bg,borderRadius:T.rs,fontSize:16,fontWeight:600,fontFamily:T.display,color:T.brand,fontStyle:"italic"}}>{f.stake&&f.odds?fmt(pp):"—"}</div></div>
+        <div><label style={S.label}>Closing Odds <span style={{fontWeight:400,textTransform:"none",letterSpacing:0,color:T.light}}>(optional)</span></label><input type="text" style={S.input} placeholder="-125 or +140" value={f.closingOdds} onChange={e=>up("closingOdds",e.target.value)}/></div>
+        <div><label style={S.label}>CLV</label><div style={{padding:"10px 12px",background:T.bg,borderRadius:T.rs,fontSize:16,fontWeight:600,fontFamily:T.display,fontStyle:"italic",...(()=>{const clv=calcCLV(f.odds,f.closingOdds);return clv===null?{color:T.light}:{color:clv>0?T.brand:clv<0?T.red:T.sub};})()}}>{(()=>{const clv=calcCLV(f.odds,f.closingOdds);return clv===null?"—":(clv>0?"+":"")+clv.toFixed(2)+"%";})()}</div></div>
         <div style={{gridColumn:"1/-1"}}><label style={S.label}>Confidence</label>
           <div style={{display:"flex",alignItems:"center",gap:12}}><Stars v={f.confidence} onChange={v=>up("confidence",v)} sz={24}/>
           <span style={{fontSize:12,color:T.sub}}>{f.confidence<=1?"Flyer":f.confidence<=2?"Gut feel":f.confidence<=3?"Decent edge":f.confidence<=4?"Strong conviction":"Lock"}</span></div>
