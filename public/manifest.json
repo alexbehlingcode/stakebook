@@ -1,0 +1,14 @@
+{
+  "name": "Stakebook — Smart Betting Tracker",
+  "short_name": "Stakebook",
+  "description": "The personal betting journal that keeps you honest.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F5F3EE",
+  "theme_color": "#1B4332",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
