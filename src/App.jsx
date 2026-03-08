@@ -516,9 +516,9 @@ function AppMain({ user }) {
   };
 
   const TPBar = () => (
-    <div className="sb-tp-bar" style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: mob ? "nowrap" : "wrap" }}>
+    <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: mob ? "nowrap" : "wrap", overflowX: mob ? "auto" : "visible", WebkitOverflowScrolling: "touch", width: "100%", paddingBottom: mob ? 4 : 0 }}>
       <I n="cal" s={14} c={T.sub} />
-      {TIME_PERIODS.map(p => <button key={p.id} style={S.pill(tp === p.id)} onClick={() => setTp(p.id)}>{p.label}</button>)}
+      {TIME_PERIODS.map(p => <button key={p.id} style={{...S.pill(tp === p.id), flexShrink: 0}} onClick={() => setTp(p.id)}>{p.label}</button>)}
     </div>
   );
 
