@@ -97,6 +97,59 @@ const S = {
 
 const Fonts = () => <style>{`@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600;700&display=swap');`}</style>;
 
+// ── Responsive hook ──
+const useIsMobile = () => {
+  const [m, setM] = useState(typeof window !== "undefined" ? window.innerWidth < 768 : false);
+  useEffect(() => {
+    const h = () => setM(window.innerWidth < 768);
+    window.addEventListener("resize", h);
+    return () => window.removeEventListener("resize", h);
+  }, []);
+  return m;
+};
+
+// ── Responsive CSS injected via style tag ──
+const ResponsiveCSS = () => <style>{`
+  @media (max-width: 767px) {
+    .sb-header-nav { display: none !important; }
+    .sb-header-logbet { display: none !important; }
+    .sb-header-logout { display: none !important; }
+    .sb-bottom-nav { display: flex !important; }
+    .sb-fab { display: flex !important; }
+    .sb-stat-grid { grid-template-columns: 1fr 1fr !important; }
+    .sb-g2 { grid-template-columns: 1fr !important; }
+    .sb-tp-bar { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+    .sb-tp-bar::-webkit-scrollbar { display: none; }
+    .sb-main { padding-bottom: 140px !important; }
+    .sb-modal-inner { width: 100% !important; max-width: 100% !important; height: 100vh !important; max-height: 100vh !important; border-radius: 0 !important; padding: 20px !important; }
+    .sb-modal-grid { grid-template-columns: 1fr 1fr !important; }
+    .sb-card { padding: 16px !important; }
+    .sb-section-title { font-size: 20px !important; }
+    .sb-input { font-size: 16px !important; }
+    .sb-bet-card { padding: 14px !important; }
+  }
+  @media (min-width: 768px) {
+    .sb-bottom-nav { display: none !important; }
+    .sb-fab { display: none !important; }
+    .sb-mobile-bet-list { display: none !important; }
+  }
+  .sb-bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: rgba(255,255,255,0.95); backdrop-filter: blur(16px);
+    border-top: 1px solid #E4E0D8; z-index: 100;
+    padding: 6px 0; padding-bottom: max(6px, env(safe-area-inset-bottom));
+    justify-content: space-around; align-items: center;
+  }
+  .sb-fab {
+    position: fixed; bottom: max(76px, calc(66px + env(safe-area-inset-bottom)));
+    right: 16px; width: 56px; height: 56px;
+    background: #1B4332; border-radius: 50%; z-index: 101;
+    align-items: center; justify-content: center;
+    box-shadow: 0 4px 16px rgba(27,67,50,0.35);
+    border: none; cursor: pointer;
+  }
+`}</style>;
+
 // ── SVG Icons ──
 const I = ({n,s=18,c="currentColor"}) => {
   const p={
@@ -150,6 +203,41 @@ const Ring = ({score,size=140}) => {
       <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={c} strokeWidth={8} strokeDasharray={circ} strokeDashoffset={off} strokeLinecap="round" style={{transition:"stroke-dashoffset 0.8s ease"}}/>
       <text x={size/2} y={size/2} textAnchor="middle" dominantBaseline="central" style={{transform:"rotate(90deg)",transformOrigin:"center",fontFamily:T.display,fontSize:size*0.3,fontWeight:400,fill:c,fontStyle:"italic"}}>{score}</text>
     </svg>
+  );
+};
+
+const Logo = () => (
+
+// ── Mobile Bet Card ──
+const BetCard = ({ b, onClick }) => {
+  const pl = b.outcome === "Pending" ? null : (b.payout || 0) - b.stake;
+  const clv = calcCLV(b.odds, b.closingOdds);
+  return (
+    <div onClick={onClick} className="sb-bet-card" style={{ background: T.card, borderRadius: T.r, border: `1px solid ${T.border}`, padding: 16, marginBottom: 10, cursor: "pointer", boxShadow: T.shadow }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontWeight: 600, fontSize: 14, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{b.team}</div>
+          <div style={{ display: "flex", gap: 6, marginTop: 4, alignItems: "center" }}>
+            <span style={S.tag(T.blue, T.blueBg)}>{b.sport}</span>
+            <span style={{ fontSize: 11, color: T.sub }}>{b.betType}</span>
+            <span style={{ fontSize: 11, color: T.light }}>{b.date.slice(5)}</span>
+          </div>
+        </div>
+        <div style={{ textAlign: "right", flexShrink: 0, marginLeft: 12 }}>
+          <OTag o={b.outcome} />
+        </div>
+      </div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 8, borderTop: `1px solid ${T.border}20` }}>
+        <div style={{ display: "flex", gap: 16, fontSize: 12 }}>
+          <span style={{ color: T.sub }}>Stake: <strong style={{ color: T.text }}>{fmt(b.stake)}</strong></span>
+          <span style={{ color: T.sub }}>Odds: <strong style={{ color: T.text }}>{b.odds > 0 ? `+${b.odds}` : b.odds}</strong></span>
+          {clv !== null && <span style={{ color: T.sub }}>CLV: <strong style={{ color: clv > 0 ? T.brand : clv < 0 ? T.red : T.sub }}>{clv > 0 ? "+" : ""}{clv.toFixed(1)}%</strong></span>}
+        </div>
+        <div style={{ fontWeight: 700, fontSize: 14, color: pl === null ? T.light : pl >= 0 ? T.brand : T.red }}>
+          {pl === null ? "—" : fmt(pl)}
+        </div>
+      </div>
+    </div>
   );
 };
 
@@ -297,6 +385,7 @@ function AppMain({ user }) {
   const [viewing, setViewing] = useState(null);
   const [tp, setTp] = useState("30d");
   const [settings, setSettings] = useState({ bankroll: 1000, dailyLimit: 200, weeklyLimit: 800, monthlyLimit: 2000, maxStake: 100, lossStreakAlert: 3 });
+  const mob = useIsMobile();
 
   // ── Load bets from DB ──
   const loadBets = useCallback(async () => {
@@ -429,7 +518,7 @@ function AppMain({ user }) {
   };
 
   const TPBar = () => (
-    <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+    <div className="sb-tp-bar" style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: mob ? "nowrap" : "wrap" }}>
       <I n="cal" s={14} c={T.sub} />
       {TIME_PERIODS.map(p => <button key={p.id} style={S.pill(tp === p.id)} onClick={() => setTp(p.id)}>{p.label}</button>)}
     </div>
@@ -440,26 +529,43 @@ function AppMain({ user }) {
   return (
     <div style={S.app}>
       <Fonts />
+      <ResponsiveCSS />
       <header style={S.header}>
         <div style={S.hInner}>
           <Logo />
           <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-            <nav style={S.nav}>
+            <nav style={S.nav} className="sb-header-nav">
               {[{ id: "dashboard", l: "Dashboard", i: "chart" }, { id: "bets", l: "My Bets", i: "book" }, { id: "analytics", l: "Analytics", i: "trend" }, { id: "health", l: "Health", i: "shield" }].map(t => (
                 <button key={t.id} style={S.navBtn(tab === t.id)} onClick={() => setTab(t.id)}>
                   <span style={{ display: "flex", alignItems: "center", gap: 6 }}><I n={t.i} s={14} />{t.l}</span>
                 </button>
               ))}
             </nav>
-            <button style={{ ...S.btn("primary"), display: "flex", alignItems: "center", gap: 6, padding: "8px 16px" }} onClick={() => { setEditing(null); setShowAdd(true); }}>
+            <button className="sb-header-logbet" style={{ ...S.btn("primary"), display: "flex", alignItems: "center", gap: 6, padding: "8px 16px" }} onClick={() => { setEditing(null); setShowAdd(true); }}>
               <I n="plus" s={16} c="#fff" /> Log Bet
             </button>
-            <button style={{ background: "none", border: "none", cursor: "pointer", padding: 6 }} onClick={handleLogout} title="Log out">
+            <button className="sb-header-logout" style={{ background: "none", border: "none", cursor: "pointer", padding: 6 }} onClick={handleLogout} title="Log out">
               <I n="logout" s={18} c={T.sub} />
             </button>
           </div>
         </div>
       </header>
+
+      {/* Mobile bottom nav */}
+      <div className="sb-bottom-nav" style={{ display: "none" }}>
+        {[{ id: "dashboard", l: "Home", i: "chart" }, { id: "bets", l: "Bets", i: "book" }, { id: "analytics", l: "Stats", i: "trend" }, { id: "health", l: "Health", i: "shield" }, { id: "_logout", l: "Account", i: "user" }].map(t => (
+          <button key={t.id} style={{ background: "none", border: "none", cursor: "pointer", padding: "6px 12px", display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}
+            onClick={() => t.id === "_logout" ? handleLogout() : setTab(t.id)}>
+            <I n={t.i} s={20} c={tab === t.id && t.id !== "_logout" ? T.brand : T.light} />
+            <span style={{ fontSize: 10, fontWeight: 600, color: tab === t.id && t.id !== "_logout" ? T.brand : T.light }}>{t.l}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Mobile FAB */}
+      <button className="sb-fab" style={{ display: "none" }} onClick={() => { setEditing(null); setShowAdd(true); }}>
+        <I n="plus" s={26} c="#fff" />
+      </button>
 
       {alerts.length > 0 && <div style={{ ...S.maxW, paddingTop: 16 }}>{alerts.map((a, i) => (
         <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "11px 16px", borderRadius: T.rs, marginBottom: 8, background: a.t === "d" ? T.redBg : T.orangeBg, color: a.t === "d" ? T.red : T.orange, border: `1px solid ${a.t === "d" ? T.red + "18" : T.orange + "18"}`, fontSize: 13, fontWeight: 500 }}>
@@ -467,7 +573,7 @@ function AppMain({ user }) {
         </div>
       ))}</div>}
 
-      <main style={S.maxW}>
+      <main style={S.maxW} className="sb-main">
         {/* ═══ DASHBOARD ═══ */}
         {tab === "dashboard" && (
           <div style={S.sec}>
@@ -486,7 +592,7 @@ function AppMain({ user }) {
                 </button>
               </div>
             ) : (<>
-              <div style={S.g4}>
+              <div style={S.g4} className="sb-stat-grid">
                 <div style={S.stat()}><span style={S.sLabel}>Net Profit</span><span style={S.sVal(A.net >= 0 ? T.brand : T.red)}>{fmt(A.net)}</span><div style={{ display: "flex", alignItems: "center", gap: 6 }}><span style={S.sSub}>{fmtPct(A.roi)} ROI</span><Delta cur={A.net} prev={A.pNet} /></div></div>
                 <div style={S.stat()}><span style={S.sLabel}>Win Rate</span><span style={S.sVal(T.brand)}>{fmtPct(A.wr)}</span><div style={{ display: "flex", alignItems: "center", gap: 6 }}><span style={S.sSub}>{A.w}W – {A.l}L – {A.push}P</span><Delta cur={A.wr} prev={A.pWr} f="%" /></div></div>
                 <div style={S.stat()}><span style={S.sLabel}>Total Wagered</span><span style={S.sVal()}>{fmt(A.stk)}</span><div style={{ display: "flex", alignItems: "center", gap: 6 }}><span style={S.sSub}>{A.setN} settled bets</span><Delta cur={A.stk} prev={A.pStk} /></div></div>
@@ -551,7 +657,8 @@ function AppMain({ user }) {
               <span><strong style={{ color: T.red }}>{filtered.filter(b => b.outcome === "Loss").length}</strong> losses</span>
               <span><strong style={{ color: T.gold }}>{filtered.filter(b => b.outcome === "Pending").length}</strong> pending</span>
             </div>
-            <div style={S.card}><div style={{ overflowX: "auto" }}><table style={S.table}><thead><tr>{["Date", "Bet", "Sport", "Type", "Book", "Odds", "Close", "CLV", "Stake", "Result", "P/L", ""].map(h => <th key={h} style={S.th}>{h}</th>)}</tr></thead><tbody>
+            {/* Desktop table */}
+            {!mob && <div style={S.card}><div style={{ overflowX: "auto" }}><table style={S.table}><thead><tr>{["Date", "Bet", "Sport", "Type", "Book", "Odds", "Close", "CLV", "Stake", "Result", "P/L", ""].map(h => <th key={h} style={S.th}>{h}</th>)}</tr></thead><tbody>
               {filtered.map(b => { const pl = b.outcome === "Pending" ? null : (b.payout || 0) - b.stake; const clv = calcCLV(b.odds, b.closingOdds); return (
                 <tr key={b.id}>
                   <td style={S.td}>{b.date}</td><td style={{ ...S.td, fontWeight: 500, maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{b.team}</td>
@@ -568,7 +675,12 @@ function AppMain({ user }) {
                   </td>
                 </tr>); })}
               {filtered.length === 0 && <tr><td colSpan={12} style={{ ...S.td, textAlign: "center", padding: 40, color: T.light }}>No bets in this period</td></tr>}
-            </tbody></table></div></div>
+            </tbody></table></div></div>}
+            {/* Mobile card list */}
+            {mob && <div>
+              {filtered.map(b => <BetCard key={b.id} b={b} onClick={() => setViewing(b)} />)}
+              {filtered.length === 0 && <div style={{ textAlign: "center", padding: 40, color: T.light }}>No bets in this period</div>}
+            </div>}
           </div>
         )}
 
@@ -579,7 +691,7 @@ function AppMain({ user }) {
               <h2 style={{ fontFamily: T.display, fontSize: 24, fontWeight: 400, margin: 0, fontStyle: "italic" }}>Analytics</h2>
               <TPBar />
             </div>
-            <div style={S.g4}>
+            <div style={S.g4} className="sb-stat-grid">
               <div style={S.stat()}><span style={S.sLabel}>Avg. Stake</span><span style={{ ...S.sVal(), fontSize: 24 }}>{fmt(A.avg)}</span></div>
               <div style={S.stat()}><span style={S.sLabel}>Current Streak</span><span style={{ ...S.sVal(A.cs >= 0 ? T.brand : T.red), fontSize: 24 }}>{A.cs > 0 ? `${A.cs}W 🔥` : A.cs < 0 ? `${Math.abs(A.cs)}L` : "—"}</span></div>
               <div style={S.stat()}><span style={S.sLabel}>Avg. CLV</span><span style={{ ...S.sVal(A.avgCLV > 0 ? T.brand : A.avgCLV < 0 ? T.red : T.sub), fontSize: 24 }}>{A.clvCount > 0 ? (A.avgCLV > 0 ? "+" : "") + A.avgCLV.toFixed(2) + "%" : "—"}</span><span style={S.sSub}>{A.clvCount} bets tracked</span></div>
@@ -589,7 +701,7 @@ function AppMain({ user }) {
             <div style={{ ...S.card, marginTop: 16, border: `1.5px solid ${T.brand}22` }}>
               <div style={{ ...S.fb, marginBottom: 4 }}><div style={S.cTitle}>✦ Closing Line Value Analysis</div><span style={S.tag(T.brand, T.brandLight)}>PRO</span></div>
               <p style={{ fontSize: 12, color: T.sub, marginBottom: 20, lineHeight: 1.6 }}>CLV measures whether you're getting better odds than the market's final price. Consistently positive CLV is the strongest indicator of long-term profitability.</p>
-              <div style={S.g2}>
+              <div className="sb-g2" style={S.g2}>
                 <div>
                   <div style={{ fontSize: 12, fontWeight: 600, color: T.sub, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 12 }}>CLV Over Time</div>
                   {A.clvTimeline.length > 0 ? (<ResponsiveContainer width="100%" height={200}>
@@ -681,7 +793,7 @@ function AppMain({ user }) {
         {tab === "health" && (
           <div style={S.sec}>
             <h2 style={{ fontFamily: T.display, fontSize: 24, fontWeight: 400, marginBottom: 16, fontStyle: "italic" }}>Betting Health</h2>
-            <div style={S.g2}>
+            <div className="sb-g2" style={S.g2}>
               <div style={{ ...S.card, display: "flex", flexDirection: "column", alignItems: "center", padding: 32 }}>
                 <div style={S.cTitle}>Your Health Score</div>
                 <Ring score={A.hp} size={160} />
@@ -736,7 +848,7 @@ function AppMain({ user }) {
 
       {/* ═══ VIEW MODAL ═══ */}
       {viewing && (
-        <div style={S.overlay} onClick={() => setViewing(null)}><div style={S.modal} onClick={e => e.stopPropagation()}>
+        <div style={S.overlay} onClick={() => setViewing(null)}><div className="sb-modal-inner" style={S.modal} onClick={e => e.stopPropagation()}>
           <div style={S.fb}><h3 style={{ fontFamily: T.display, fontSize: 20, fontWeight: 400, margin: 0, fontStyle: "italic" }}>Bet Details</h3><button onClick={() => setViewing(null)} style={{ background: "none", border: "none", cursor: "pointer" }}><I n="x" s={20} /></button></div>
           <div style={{ marginTop: 20, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
             {[{ l: "Date", v: viewing.date }, { l: "Sport", v: viewing.sport }, { l: "Bet Type", v: viewing.betType }, { l: "Sportsbook", v: viewing.sportsbook }, { l: "Odds", v: viewing.odds > 0 ? `+${viewing.odds}` : viewing.odds }, { l: "Stake", v: fmt(viewing.stake) }].map(x => (
@@ -771,7 +883,7 @@ function BetModal({ bet, isEdit, settings, saving, onSave, onClose }) {
   const up = (k, v) => { setF(p => ({ ...p, [k]: v })); if (k === "stake") { const s = parseFloat(v); setSw(s > settings.maxStake ? `Exceeds max stake of ${fmt(settings.maxStake)}` : ""); } };
   const pp = calcPayout(f.stake, f.odds);
   return (
-    <div style={S.overlay} onClick={onClose}><div style={S.modal} onClick={e => e.stopPropagation()}>
+    <div style={S.overlay} onClick={onClose}><div className="sb-modal-inner" style={S.modal} onClick={e => e.stopPropagation()}>
       <div style={S.fb}><h3 style={{ fontFamily: T.display, fontSize: 20, fontWeight: 400, margin: 0, fontStyle: "italic" }}>{isEdit ? "Edit Bet" : "Log New Bet"}</h3><button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer" }}><I n="x" s={20} /></button></div>
       <div style={{ marginTop: 20, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
         <div><label style={S.label}>Date</label><input type="date" style={S.input} value={f.date} onChange={e => up("date", e.target.value)} /></div>
