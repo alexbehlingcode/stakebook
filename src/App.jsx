@@ -80,7 +80,7 @@ const S = {
   stat:()=>({background:T.card,borderRadius:T.r,border:`1px solid ${T.border}`,padding:20,display:"flex",flexDirection:"column",gap:4,boxSizing:"border-box",overflow:"hidden",minWidth:0}),
   sLabel:{fontSize:11,fontWeight:600,color:T.sub,textTransform:"uppercase",letterSpacing:"0.06em"},
   sVal:c=>({fontFamily:T.display,fontSize:30,fontWeight:400,color:c||T.text,letterSpacing:"-0.02em",lineHeight:1.1,fontStyle:"italic"}),
-  sSub:{fontSize:12,color:T.sub},
+  sSub:{fontSize:11,color:T.sub,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"},
   input:{width:"100%",padding:"10px 12px",borderRadius:T.rs,border:`1px solid ${T.border}`,fontSize:14,fontFamily:T.body,background:"#FAFAF7",outline:"none",boxSizing:"border-box",transition:"border 0.2s"},
   select:{width:"100%",padding:"10px 12px",borderRadius:T.rs,border:`1px solid ${T.border}`,fontSize:14,fontFamily:T.body,background:"#FAFAF7",outline:"none",boxSizing:"border-box",appearance:"none",cursor:"pointer"},
   label:{fontSize:11,fontWeight:600,color:T.sub,textTransform:"uppercase",letterSpacing:"0.06em",marginBottom:6,display:"block"},
@@ -511,8 +511,8 @@ function AppMain({ user }) {
   const Delta = ({ cur, prev, f = "$" }) => {
     if (!prev && !cur) return null; const d = cur - prev; if (Math.abs(d) < 0.001) return null;
     const up = d > 0, good = up;
-    const txt = f === "$" ? (up ? "+" : "") + fmt(d) : (up ? "+" : "") + (d * 100).toFixed(1) + "%";
-    return <span style={{ display: "inline-flex", alignItems: "center", gap: 3, fontSize: 10, fontWeight: 700, color: good ? T.brand : T.red, background: good ? T.brandLight : T.redBg, padding: "2px 7px", borderRadius: 5 }}><I n={up ? "up" : "down"} s={9} c={good ? T.brand : T.red} />{txt}</span>;
+    const txt = f === "$" ? (up ? "+" : "") + (mob && Math.abs(d) >= 1000 ? `$${(d/1000).toFixed(1)}k` : fmt(d)) : (up ? "+" : "") + (d * 100).toFixed(1) + "%";
+    return <span style={{ display: "inline-flex", alignItems: "center", gap: 2, fontSize: mob ? 9 : 10, fontWeight: 700, color: good ? T.brand : T.red, background: good ? T.brandLight : T.redBg, padding: "2px 6px", borderRadius: 5, whiteSpace: "nowrap" }}><I n={up ? "up" : "down"} s={8} c={good ? T.brand : T.red} />{txt}</span>;
   };
 
   const TPBar = () => (
@@ -590,10 +590,10 @@ function AppMain({ user }) {
               </div>
             ) : (<>
               <div style={{...S.g4, gridTemplateColumns: mob ? "1fr 1fr" : "repeat(auto-fit,minmax(200px,1fr))"}}>
-                <div style={S.stat()}><span style={S.sLabel}>Net Profit</span><span style={S.sVal(A.net >= 0 ? T.brand : T.red)}>{fmt(A.net)}</span><div style={{ display: "flex", alignItems: "center", gap: 6 }}><span style={S.sSub}>{fmtPct(A.roi)} ROI</span><Delta cur={A.net} prev={A.pNet} /></div></div>
-                <div style={S.stat()}><span style={S.sLabel}>Win Rate</span><span style={S.sVal(T.brand)}>{fmtPct(A.wr)}</span><div style={{ display: "flex", alignItems: "center", gap: 6 }}><span style={S.sSub}>{A.w}W – {A.l}L – {A.push}P</span><Delta cur={A.wr} prev={A.pWr} f="%" /></div></div>
-                <div style={S.stat()}><span style={S.sLabel}>Total Wagered</span><span style={S.sVal()}>{fmt(A.stk)}</span><div style={{ display: "flex", alignItems: "center", gap: 6 }}><span style={S.sSub}>{A.setN} settled bets</span><Delta cur={A.stk} prev={A.pStk} /></div></div>
-                <div style={S.stat()}><span style={S.sLabel}>Health Score</span><span style={S.sVal(A.hp >= 75 ? T.brand : A.hp >= 50 ? T.orange : T.red)}>{A.hp}/100</span><span style={S.sSub}>{A.hp >= 75 ? "Looking sharp" : A.hp >= 50 ? "Watch your limits" : "Take a break"}</span></div>
+                <div style={S.stat()}><span style={S.sLabel}>Net Profit</span><span style={{...S.sVal(A.net >= 0 ? T.brand : T.red), fontSize: mob ? 22 : 30}}>{fmt(A.net)}</span><div style={{ display: "flex", flexDirection: mob ? "column" : "row", alignItems: mob ? "flex-start" : "center", gap: mob ? 2 : 6 }}><span style={S.sSub}>{fmtPct(A.roi)} ROI</span><Delta cur={A.net} prev={A.pNet} /></div></div>
+                <div style={S.stat()}><span style={S.sLabel}>Win Rate</span><span style={{...S.sVal(T.brand), fontSize: mob ? 22 : 30}}>{fmtPct(A.wr)}</span><div style={{ display: "flex", flexDirection: mob ? "column" : "row", alignItems: mob ? "flex-start" : "center", gap: mob ? 2 : 6 }}><span style={S.sSub}>{A.w}W – {A.l}L – {A.push}P</span><Delta cur={A.wr} prev={A.pWr} f="%" /></div></div>
+                <div style={S.stat()}><span style={S.sLabel}>Total Wagered</span><span style={{...S.sVal(), fontSize: mob ? 22 : 30}}>{fmt(A.stk)}</span><div style={{ display: "flex", flexDirection: mob ? "column" : "row", alignItems: mob ? "flex-start" : "center", gap: mob ? 2 : 6 }}><span style={S.sSub}>{A.setN} settled</span><Delta cur={A.stk} prev={A.pStk} /></div></div>
+                <div style={S.stat()}><span style={S.sLabel}>Health Score</span><span style={{...S.sVal(A.hp >= 75 ? T.brand : A.hp >= 50 ? T.orange : T.red), fontSize: mob ? 22 : 30}}>{A.hp}/100</span><span style={S.sSub}>{A.hp >= 75 ? "Looking sharp" : A.hp >= 50 ? "Watch your limits" : "Take a break"}</span></div>
               </div>
 
               <div style={{ ...S.g2, marginTop: 16 }}>
@@ -625,17 +625,21 @@ function AppMain({ user }) {
 
               <div style={{ ...S.card, marginTop: 16 }}>
                 <div style={S.fb}><div style={S.cTitle}>Recent Bets <span style={{ fontFamily: T.body, fontSize: 12, fontWeight: 400, color: T.light, fontStyle: "normal" }}>({filtered.length})</span></div><button style={{ ...S.btn("ghost"), fontSize: 12, padding: "6px 12px" }} onClick={() => setTab("bets")}>View All →</button></div>
-                <div style={{ overflowX: "auto" }}><table style={S.table}><thead><tr>{["Date", "Bet", "Sport", "Type", "Odds", "Stake", "Result", "P/L", "CLV", ""].map(h => <th key={h} style={S.th}>{h}</th>)}</tr></thead><tbody>
-                  {filtered.slice(0, 7).map(b => { const pl = b.outcome === "Pending" ? null : (b.payout || 0) - b.stake; const clv = calcCLV(b.odds, b.closingOdds); return (
-                    <tr key={b.id} style={{ cursor: "pointer" }} onClick={() => setViewing(b)}>
-                      <td style={S.td}>{b.date.slice(5)}</td><td style={{ ...S.td, fontWeight: 500, maxWidth: 180, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{b.team}</td>
-                      <td style={S.td}><span style={S.tag(T.blue, T.blueBg)}>{b.sport}</span></td><td style={{ ...S.td, color: T.sub }}>{b.betType}</td>
-                      <td style={S.td}>{b.odds > 0 ? `+${b.odds}` : b.odds}</td><td style={S.td}>{fmt(b.stake)}</td><td style={S.td}><OTag o={b.outcome} /></td>
-                      <td style={{ ...S.td, fontWeight: 600, color: pl === null ? T.light : pl >= 0 ? T.brand : T.red }}>{pl === null ? "—" : fmt(pl)}</td>
-                      <td style={{ ...S.td, fontWeight: 600, fontSize: 12, color: clv === null ? T.light : clv > 0 ? T.brand : clv < 0 ? T.red : T.sub }}>{clv === null ? "—" : clv > 0 ? `+${clv.toFixed(1)}%` : `${clv.toFixed(1)}%`}</td>
-                      <td style={S.td}><Stars v={b.confidence} sz={11} /></td>
-                    </tr>); })}
-                </tbody></table></div>
+                {mob ? (
+                  <div>{filtered.slice(0, 5).map(b => <BetCard key={b.id} b={b} onClick={() => setViewing(b)} />)}{filtered.length === 0 && <div style={{ textAlign: "center", padding: 32, color: T.light }}>No bets yet</div>}</div>
+                ) : (
+                  <div style={{ overflowX: "auto" }}><table style={S.table}><thead><tr>{["Date", "Bet", "Sport", "Type", "Odds", "Stake", "Result", "P/L", "CLV", ""].map(h => <th key={h} style={S.th}>{h}</th>)}</tr></thead><tbody>
+                    {filtered.slice(0, 7).map(b => { const pl = b.outcome === "Pending" ? null : (b.payout || 0) - b.stake; const clv = calcCLV(b.odds, b.closingOdds); return (
+                      <tr key={b.id} style={{ cursor: "pointer" }} onClick={() => setViewing(b)}>
+                        <td style={S.td}>{b.date.slice(5)}</td><td style={{ ...S.td, fontWeight: 500, maxWidth: 180, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{b.team}</td>
+                        <td style={S.td}><span style={S.tag(T.blue, T.blueBg)}>{b.sport}</span></td><td style={{ ...S.td, color: T.sub }}>{b.betType}</td>
+                        <td style={S.td}>{b.odds > 0 ? `+${b.odds}` : b.odds}</td><td style={S.td}>{fmt(b.stake)}</td><td style={S.td}><OTag o={b.outcome} /></td>
+                        <td style={{ ...S.td, fontWeight: 600, color: pl === null ? T.light : pl >= 0 ? T.brand : T.red }}>{pl === null ? "—" : fmt(pl)}</td>
+                        <td style={{ ...S.td, fontWeight: 600, fontSize: 12, color: clv === null ? T.light : clv > 0 ? T.brand : clv < 0 ? T.red : T.sub }}>{clv === null ? "—" : clv > 0 ? `+${clv.toFixed(1)}%` : `${clv.toFixed(1)}%`}</td>
+                        <td style={S.td}><Stars v={b.confidence} sz={11} /></td>
+                      </tr>); })}
+                  </tbody></table></div>
+                )}
               </div>
             </>)}
           </div>
@@ -689,10 +693,10 @@ function AppMain({ user }) {
               <TPBar />
             </div>
             <div style={{...S.g4, gridTemplateColumns: mob ? "1fr 1fr" : "repeat(auto-fit,minmax(200px,1fr))"}}>
-              <div style={S.stat()}><span style={S.sLabel}>Avg. Stake</span><span style={{ ...S.sVal(), fontSize: 24 }}>{fmt(A.avg)}</span></div>
-              <div style={S.stat()}><span style={S.sLabel}>Current Streak</span><span style={{ ...S.sVal(A.cs >= 0 ? T.brand : T.red), fontSize: 24 }}>{A.cs > 0 ? `${A.cs}W 🔥` : A.cs < 0 ? `${Math.abs(A.cs)}L` : "—"}</span></div>
-              <div style={S.stat()}><span style={S.sLabel}>Avg. CLV</span><span style={{ ...S.sVal(A.avgCLV > 0 ? T.brand : A.avgCLV < 0 ? T.red : T.sub), fontSize: 24 }}>{A.clvCount > 0 ? (A.avgCLV > 0 ? "+" : "") + A.avgCLV.toFixed(2) + "%" : "—"}</span><span style={S.sSub}>{A.clvCount} bets tracked</span></div>
-              <div style={S.stat()}><span style={S.sLabel}>+CLV Win Rate</span><span style={{ ...S.sVal(T.brand), fontSize: 24 }}>{A.posCLVcount > 0 ? fmtPct(A.posCLVwr) : "—"}</span><span style={S.sSub}>vs {A.clvCount - A.posCLVcount > 0 ? fmtPct(A.negCLVwr) : "—"} on −CLV bets</span></div>
+              <div style={S.stat()}><span style={S.sLabel}>Avg. Stake</span><span style={{ ...S.sVal(), fontSize: mob ? 20 : 24 }}>{fmt(A.avg)}</span></div>
+              <div style={S.stat()}><span style={S.sLabel}>Current Streak</span><span style={{ ...S.sVal(A.cs >= 0 ? T.brand : T.red), fontSize: mob ? 20 : 24 }}>{A.cs > 0 ? `${A.cs}W 🔥` : A.cs < 0 ? `${Math.abs(A.cs)}L` : "—"}</span></div>
+              <div style={S.stat()}><span style={S.sLabel}>Avg. CLV</span><span style={{ ...S.sVal(A.avgCLV > 0 ? T.brand : A.avgCLV < 0 ? T.red : T.sub), fontSize: mob ? 20 : 24 }}>{A.clvCount > 0 ? (A.avgCLV > 0 ? "+" : "") + A.avgCLV.toFixed(2) + "%" : "—"}</span><span style={S.sSub}>{A.clvCount} tracked</span></div>
+              <div style={S.stat()}><span style={S.sLabel}>+CLV Win Rate</span><span style={{ ...S.sVal(T.brand), fontSize: mob ? 20 : 24 }}>{A.posCLVcount > 0 ? fmtPct(A.posCLVwr) : "—"}</span><span style={S.sSub}>vs {A.clvCount - A.posCLVcount > 0 ? fmtPct(A.negCLVwr) : "—"} −CLV</span></div>
             </div>
 
             <div style={{ ...S.card, marginTop: 16, border: `1.5px solid ${T.brand}22` }}>
