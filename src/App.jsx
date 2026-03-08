@@ -766,24 +766,33 @@ function AppMain({ user }) {
 
             <div style={{ ...S.card, marginTop: 16 }}>
               <div style={S.cTitle}>Performance by Sport</div>
-              <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}><table style={S.table}><thead><tr>{["Sport", "Bets", "W/L", "Win%", "Staked", "P/L", "ROI"].map(h => <th key={h} style={{...S.th, whiteSpace: "nowrap"}}>{h}</th>)}</tr></thead><tbody>
+              <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}><table style={{...S.table, fontSize: mob ? 11 : 13}}><thead><tr>{(mob ? ["Sport", "W/L", "Win%", "P/L", "ROI"] : ["Sport", "Bets", "W/L", "Win%", "Staked", "P/L", "ROI"]).map(h => <th key={h} style={{...S.th, whiteSpace: "nowrap", padding: mob ? "8px 6px" : "10px 12px"}}>{h}</th>)}</tr></thead><tbody>
                 {Object.entries(A.bySport).sort((a, b) => b[1].pnl - a[1].pnl).map(([sp, d]) => (
-                  <tr key={sp}><td style={{ ...S.td, fontWeight: 600, whiteSpace: "nowrap" }}>{sp}</td><td style={S.td}>{d.n}</td><td style={{...S.td, whiteSpace: "nowrap"}}>{d.w}–{d.l}</td>
-                    <td style={{...S.td, whiteSpace: "nowrap"}}>{d.n > 0 ? fmtPct(d.w / d.n) : "—"}</td><td style={{...S.td, whiteSpace: "nowrap"}}>{fmt(d.stk)}</td>
-                    <td style={{ ...S.td, fontWeight: 600, color: d.pnl >= 0 ? T.brand : T.red, whiteSpace: "nowrap" }}>{fmt(d.pnl)}</td>
-                    <td style={{ ...S.td, color: d.pnl / d.stk >= 0 ? T.brand : T.red, whiteSpace: "nowrap" }}>{d.stk > 0 ? fmtPct(d.pnl / d.stk) : "—"}</td></tr>
+                  <tr key={sp}>
+                    <td style={{ ...S.td, fontWeight: 600, whiteSpace: "nowrap", padding: mob ? "10px 6px" : "12px" }}>{sp}</td>
+                    {!mob && <td style={{...S.td, padding: "12px"}}>{d.n}</td>}
+                    <td style={{...S.td, whiteSpace: "nowrap", padding: mob ? "10px 6px" : "12px"}}>{d.w}–{d.l}</td>
+                    <td style={{...S.td, whiteSpace: "nowrap", padding: mob ? "10px 6px" : "12px"}}>{d.n > 0 ? fmtPct(d.w / d.n) : "—"}</td>
+                    {!mob && <td style={{...S.td, whiteSpace: "nowrap", padding: "12px"}}>{fmt(d.stk)}</td>}
+                    <td style={{ ...S.td, fontWeight: 600, color: d.pnl >= 0 ? T.brand : T.red, whiteSpace: "nowrap", padding: mob ? "10px 6px" : "12px" }}>{fmt(d.pnl)}</td>
+                    <td style={{ ...S.td, color: d.pnl / d.stk >= 0 ? T.brand : T.red, whiteSpace: "nowrap", padding: mob ? "10px 6px" : "12px" }}>{d.stk > 0 ? fmtPct(d.pnl / d.stk) : "—"}</td>
+                  </tr>
                 ))}
-                {Object.keys(A.bySport).length === 0 && <tr><td colSpan={7} style={{ ...S.td, textAlign: "center", padding: 32, color: T.light }}>No data</td></tr>}
+                {Object.keys(A.bySport).length === 0 && <tr><td colSpan={mob ? 5 : 7} style={{ ...S.td, textAlign: "center", padding: 32, color: T.light }}>No data</td></tr>}
               </tbody></table></div>
             </div>
             <div style={{ ...S.card, marginTop: 16 }}>
               <div style={S.cTitle}>Performance by Sportsbook</div>
-              <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}><table style={S.table}><thead><tr>{["Book", "Bets", "Win%", "Staked", "P/L", "ROI"].map(h => <th key={h} style={{...S.th, whiteSpace: "nowrap"}}>{h}</th>)}</tr></thead><tbody>
+              <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}><table style={{...S.table, fontSize: mob ? 11 : 13}}><thead><tr>{(mob ? ["Book", "W/L", "Win%", "P/L", "ROI"] : ["Book", "Bets", "Win%", "Staked", "P/L", "ROI"]).map(h => <th key={h} style={{...S.th, whiteSpace: "nowrap", padding: mob ? "8px 6px" : "10px 12px"}}>{h}</th>)}</tr></thead><tbody>
                 {Object.entries(A.byBook).sort((a, b) => b[1].pnl - a[1].pnl).map(([bk, d]) => (
-                  <tr key={bk}><td style={{ ...S.td, fontWeight: 600, whiteSpace: "nowrap" }}>{bk}</td><td style={S.td}>{d.n}</td>
-                    <td style={{...S.td, whiteSpace: "nowrap"}}>{d.n > 0 ? fmtPct(d.w / d.n) : "—"}</td><td style={{...S.td, whiteSpace: "nowrap"}}>{fmt(d.stk)}</td>
-                    <td style={{ ...S.td, fontWeight: 600, color: d.pnl >= 0 ? T.brand : T.red, whiteSpace: "nowrap" }}>{fmt(d.pnl)}</td>
-                    <td style={{ ...S.td, color: d.pnl / d.stk >= 0 ? T.brand : T.red, whiteSpace: "nowrap" }}>{d.stk > 0 ? fmtPct(d.pnl / d.stk) : "—"}</td></tr>
+                  <tr key={bk}>
+                    <td style={{ ...S.td, fontWeight: 600, whiteSpace: "nowrap", padding: mob ? "10px 6px" : "12px" }}>{bk}</td>
+                    {!mob && <td style={{...S.td, padding: "12px"}}>{d.n}</td>}
+                    {mob ? <td style={{...S.td, whiteSpace: "nowrap", padding: "10px 6px"}}>{d.w}–{d.l}</td> : <td style={{...S.td, whiteSpace: "nowrap", padding: "12px"}}>{d.n > 0 ? fmtPct(d.w / d.n) : "—"}</td>}
+                    {mob ? <td style={{...S.td, whiteSpace: "nowrap", padding: "10px 6px"}}>{d.n > 0 ? fmtPct(d.w / d.n) : "—"}</td> : <td style={{...S.td, whiteSpace: "nowrap", padding: "12px"}}>{fmt(d.stk)}</td>}
+                    <td style={{ ...S.td, fontWeight: 600, color: d.pnl >= 0 ? T.brand : T.red, whiteSpace: "nowrap", padding: mob ? "10px 6px" : "12px" }}>{fmt(d.pnl)}</td>
+                    <td style={{ ...S.td, color: d.pnl / d.stk >= 0 ? T.brand : T.red, whiteSpace: "nowrap", padding: mob ? "10px 6px" : "12px" }}>{d.stk > 0 ? fmtPct(d.pnl / d.stk) : "—"}</td>
+                  </tr>
                 ))}
               </tbody></table></div>
             </div>
