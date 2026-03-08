@@ -762,26 +762,26 @@ function AppMain({ user }) {
 
             <div style={{ ...S.card, marginTop: 16 }}>
               <div style={S.cTitle}>Performance by Sport</div>
-              <table style={S.table}><thead><tr>{["Sport", "Bets", "W/L", "Win%", "Staked", "P/L", "ROI"].map(h => <th key={h} style={S.th}>{h}</th>)}</tr></thead><tbody>
+              <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}><table style={S.table}><thead><tr>{["Sport", "Bets", "W/L", "Win%", "Staked", "P/L", "ROI"].map(h => <th key={h} style={{...S.th, whiteSpace: "nowrap"}}>{h}</th>)}</tr></thead><tbody>
                 {Object.entries(A.bySport).sort((a, b) => b[1].pnl - a[1].pnl).map(([sp, d]) => (
-                  <tr key={sp}><td style={{ ...S.td, fontWeight: 600 }}>{sp}</td><td style={S.td}>{d.n}</td><td style={S.td}>{d.w}–{d.l}</td>
-                    <td style={S.td}>{d.n > 0 ? fmtPct(d.w / d.n) : "—"}</td><td style={S.td}>{fmt(d.stk)}</td>
-                    <td style={{ ...S.td, fontWeight: 600, color: d.pnl >= 0 ? T.brand : T.red }}>{fmt(d.pnl)}</td>
-                    <td style={{ ...S.td, color: d.pnl / d.stk >= 0 ? T.brand : T.red }}>{d.stk > 0 ? fmtPct(d.pnl / d.stk) : "—"}</td></tr>
+                  <tr key={sp}><td style={{ ...S.td, fontWeight: 600, whiteSpace: "nowrap" }}>{sp}</td><td style={S.td}>{d.n}</td><td style={{...S.td, whiteSpace: "nowrap"}}>{d.w}–{d.l}</td>
+                    <td style={{...S.td, whiteSpace: "nowrap"}}>{d.n > 0 ? fmtPct(d.w / d.n) : "—"}</td><td style={{...S.td, whiteSpace: "nowrap"}}>{fmt(d.stk)}</td>
+                    <td style={{ ...S.td, fontWeight: 600, color: d.pnl >= 0 ? T.brand : T.red, whiteSpace: "nowrap" }}>{fmt(d.pnl)}</td>
+                    <td style={{ ...S.td, color: d.pnl / d.stk >= 0 ? T.brand : T.red, whiteSpace: "nowrap" }}>{d.stk > 0 ? fmtPct(d.pnl / d.stk) : "—"}</td></tr>
                 ))}
                 {Object.keys(A.bySport).length === 0 && <tr><td colSpan={7} style={{ ...S.td, textAlign: "center", padding: 32, color: T.light }}>No data</td></tr>}
-              </tbody></table>
+              </tbody></table></div>
             </div>
             <div style={{ ...S.card, marginTop: 16 }}>
               <div style={S.cTitle}>Performance by Sportsbook</div>
-              <table style={S.table}><thead><tr>{["Book", "Bets", "Win%", "Staked", "P/L", "ROI"].map(h => <th key={h} style={S.th}>{h}</th>)}</tr></thead><tbody>
+              <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}><table style={S.table}><thead><tr>{["Book", "Bets", "Win%", "Staked", "P/L", "ROI"].map(h => <th key={h} style={{...S.th, whiteSpace: "nowrap"}}>{h}</th>)}</tr></thead><tbody>
                 {Object.entries(A.byBook).sort((a, b) => b[1].pnl - a[1].pnl).map(([bk, d]) => (
-                  <tr key={bk}><td style={{ ...S.td, fontWeight: 600 }}>{bk}</td><td style={S.td}>{d.n}</td>
-                    <td style={S.td}>{d.n > 0 ? fmtPct(d.w / d.n) : "—"}</td><td style={S.td}>{fmt(d.stk)}</td>
-                    <td style={{ ...S.td, fontWeight: 600, color: d.pnl >= 0 ? T.brand : T.red }}>{fmt(d.pnl)}</td>
-                    <td style={{ ...S.td, color: d.pnl / d.stk >= 0 ? T.brand : T.red }}>{d.stk > 0 ? fmtPct(d.pnl / d.stk) : "—"}</td></tr>
+                  <tr key={bk}><td style={{ ...S.td, fontWeight: 600, whiteSpace: "nowrap" }}>{bk}</td><td style={S.td}>{d.n}</td>
+                    <td style={{...S.td, whiteSpace: "nowrap"}}>{d.n > 0 ? fmtPct(d.w / d.n) : "—"}</td><td style={{...S.td, whiteSpace: "nowrap"}}>{fmt(d.stk)}</td>
+                    <td style={{ ...S.td, fontWeight: 600, color: d.pnl >= 0 ? T.brand : T.red, whiteSpace: "nowrap" }}>{fmt(d.pnl)}</td>
+                    <td style={{ ...S.td, color: d.pnl / d.stk >= 0 ? T.brand : T.red, whiteSpace: "nowrap" }}>{d.stk > 0 ? fmtPct(d.pnl / d.stk) : "—"}</td></tr>
                 ))}
-              </tbody></table>
+              </tbody></table></div>
             </div>
           </div>
         )}
