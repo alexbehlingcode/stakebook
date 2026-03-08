@@ -206,8 +206,6 @@ const Ring = ({score,size=140}) => {
   );
 };
 
-const Logo = () => (
-
 // ── Mobile Bet Card ──
 const BetCard = ({ b, onClick }) => {
   const pl = b.outcome === "Pending" ? null : (b.payout || 0) - b.stake;
@@ -527,32 +525,31 @@ function AppMain({ user }) {
   if (loading) return <div style={S.app}><Fonts /><Spinner /></div>;
 
   return (
-    <div style={S.app}>
+    <div style={{...S.app, paddingBottom: mob ? 80 : 0}}>
       <Fonts />
-      <ResponsiveCSS />
       <header style={S.header}>
         <div style={S.hInner}>
           <Logo />
-          <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-            <nav style={S.nav} className="sb-header-nav">
+          {!mob && <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+            <nav style={S.nav}>
               {[{ id: "dashboard", l: "Dashboard", i: "chart" }, { id: "bets", l: "My Bets", i: "book" }, { id: "analytics", l: "Analytics", i: "trend" }, { id: "health", l: "Health", i: "shield" }].map(t => (
                 <button key={t.id} style={S.navBtn(tab === t.id)} onClick={() => setTab(t.id)}>
                   <span style={{ display: "flex", alignItems: "center", gap: 6 }}><I n={t.i} s={14} />{t.l}</span>
                 </button>
               ))}
             </nav>
-            <button className="sb-header-logbet" style={{ ...S.btn("primary"), display: "flex", alignItems: "center", gap: 6, padding: "8px 16px" }} onClick={() => { setEditing(null); setShowAdd(true); }}>
+            <button style={{ ...S.btn("primary"), display: "flex", alignItems: "center", gap: 6, padding: "8px 16px" }} onClick={() => { setEditing(null); setShowAdd(true); }}>
               <I n="plus" s={16} c="#fff" /> Log Bet
             </button>
-            <button className="sb-header-logout" style={{ background: "none", border: "none", cursor: "pointer", padding: 6 }} onClick={handleLogout} title="Log out">
+            <button style={{ background: "none", border: "none", cursor: "pointer", padding: 6 }} onClick={handleLogout} title="Log out">
               <I n="logout" s={18} c={T.sub} />
             </button>
-          </div>
+          </div>}
         </div>
       </header>
 
       {/* Mobile bottom nav */}
-      <div className="sb-bottom-nav" style={{ display: "none" }}>
+      {mob && <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: "rgba(255,255,255,0.95)", backdropFilter: "blur(16px)", borderTop: `1px solid ${T.border}`, zIndex: 100, padding: "6px 0", paddingBottom: "max(6px, env(safe-area-inset-bottom))", display: "flex", justifyContent: "space-around", alignItems: "center" }}>
         {[{ id: "dashboard", l: "Home", i: "chart" }, { id: "bets", l: "Bets", i: "book" }, { id: "analytics", l: "Stats", i: "trend" }, { id: "health", l: "Health", i: "shield" }, { id: "_logout", l: "Account", i: "user" }].map(t => (
           <button key={t.id} style={{ background: "none", border: "none", cursor: "pointer", padding: "6px 12px", display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}
             onClick={() => t.id === "_logout" ? handleLogout() : setTab(t.id)}>
@@ -560,12 +557,12 @@ function AppMain({ user }) {
             <span style={{ fontSize: 10, fontWeight: 600, color: tab === t.id && t.id !== "_logout" ? T.brand : T.light }}>{t.l}</span>
           </button>
         ))}
-      </div>
+      </div>}
 
       {/* Mobile FAB */}
-      <button className="sb-fab" style={{ display: "none" }} onClick={() => { setEditing(null); setShowAdd(true); }}>
+      {mob && <button style={{ position: "fixed", bottom: 76, right: 16, width: 56, height: 56, background: T.brand, borderRadius: "50%", zIndex: 101, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 16px rgba(27,67,50,0.35)", border: "none", cursor: "pointer" }} onClick={() => { setEditing(null); setShowAdd(true); }}>
         <I n="plus" s={26} c="#fff" />
-      </button>
+      </button>}
 
       {alerts.length > 0 && <div style={{ ...S.maxW, paddingTop: 16 }}>{alerts.map((a, i) => (
         <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "11px 16px", borderRadius: T.rs, marginBottom: 8, background: a.t === "d" ? T.redBg : T.orangeBg, color: a.t === "d" ? T.red : T.orange, border: `1px solid ${a.t === "d" ? T.red + "18" : T.orange + "18"}`, fontSize: 13, fontWeight: 500 }}>
@@ -592,7 +589,7 @@ function AppMain({ user }) {
                 </button>
               </div>
             ) : (<>
-              <div style={S.g4} className="sb-stat-grid">
+              <div style={{...S.g4, gridTemplateColumns: mob ? "1fr 1fr" : "repeat(auto-fit,minmax(200px,1fr))"}}>
                 <div style={S.stat()}><span style={S.sLabel}>Net Profit</span><span style={S.sVal(A.net >= 0 ? T.brand : T.red)}>{fmt(A.net)}</span><div style={{ display: "flex", alignItems: "center", gap: 6 }}><span style={S.sSub}>{fmtPct(A.roi)} ROI</span><Delta cur={A.net} prev={A.pNet} /></div></div>
                 <div style={S.stat()}><span style={S.sLabel}>Win Rate</span><span style={S.sVal(T.brand)}>{fmtPct(A.wr)}</span><div style={{ display: "flex", alignItems: "center", gap: 6 }}><span style={S.sSub}>{A.w}W – {A.l}L – {A.push}P</span><Delta cur={A.wr} prev={A.pWr} f="%" /></div></div>
                 <div style={S.stat()}><span style={S.sLabel}>Total Wagered</span><span style={S.sVal()}>{fmt(A.stk)}</span><div style={{ display: "flex", alignItems: "center", gap: 6 }}><span style={S.sSub}>{A.setN} settled bets</span><Delta cur={A.stk} prev={A.pStk} /></div></div>
@@ -691,7 +688,7 @@ function AppMain({ user }) {
               <h2 style={{ fontFamily: T.display, fontSize: 24, fontWeight: 400, margin: 0, fontStyle: "italic" }}>Analytics</h2>
               <TPBar />
             </div>
-            <div style={S.g4} className="sb-stat-grid">
+            <div style={{...S.g4, gridTemplateColumns: mob ? "1fr 1fr" : "repeat(auto-fit,minmax(200px,1fr))"}}>
               <div style={S.stat()}><span style={S.sLabel}>Avg. Stake</span><span style={{ ...S.sVal(), fontSize: 24 }}>{fmt(A.avg)}</span></div>
               <div style={S.stat()}><span style={S.sLabel}>Current Streak</span><span style={{ ...S.sVal(A.cs >= 0 ? T.brand : T.red), fontSize: 24 }}>{A.cs > 0 ? `${A.cs}W 🔥` : A.cs < 0 ? `${Math.abs(A.cs)}L` : "—"}</span></div>
               <div style={S.stat()}><span style={S.sLabel}>Avg. CLV</span><span style={{ ...S.sVal(A.avgCLV > 0 ? T.brand : A.avgCLV < 0 ? T.red : T.sub), fontSize: 24 }}>{A.clvCount > 0 ? (A.avgCLV > 0 ? "+" : "") + A.avgCLV.toFixed(2) + "%" : "—"}</span><span style={S.sSub}>{A.clvCount} bets tracked</span></div>
@@ -701,7 +698,7 @@ function AppMain({ user }) {
             <div style={{ ...S.card, marginTop: 16, border: `1.5px solid ${T.brand}22` }}>
               <div style={{ ...S.fb, marginBottom: 4 }}><div style={S.cTitle}>✦ Closing Line Value Analysis</div><span style={S.tag(T.brand, T.brandLight)}>PRO</span></div>
               <p style={{ fontSize: 12, color: T.sub, marginBottom: 20, lineHeight: 1.6 }}>CLV measures whether you're getting better odds than the market's final price. Consistently positive CLV is the strongest indicator of long-term profitability.</p>
-              <div className="sb-g2" style={S.g2}>
+              <div style={{...S.g2, gridTemplateColumns: mob ? "1fr" : "repeat(auto-fit,minmax(320px,1fr))"}}>
                 <div>
                   <div style={{ fontSize: 12, fontWeight: 600, color: T.sub, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 12 }}>CLV Over Time</div>
                   {A.clvTimeline.length > 0 ? (<ResponsiveContainer width="100%" height={200}>
@@ -793,7 +790,7 @@ function AppMain({ user }) {
         {tab === "health" && (
           <div style={S.sec}>
             <h2 style={{ fontFamily: T.display, fontSize: 24, fontWeight: 400, marginBottom: 16, fontStyle: "italic" }}>Betting Health</h2>
-            <div className="sb-g2" style={S.g2}>
+            <div style={{...S.g2, gridTemplateColumns: mob ? "1fr" : "repeat(auto-fit,minmax(320px,1fr))"}}>
               <div style={{ ...S.card, display: "flex", flexDirection: "column", alignItems: "center", padding: 32 }}>
                 <div style={S.cTitle}>Your Health Score</div>
                 <Ring score={A.hp} size={160} />
@@ -848,7 +845,7 @@ function AppMain({ user }) {
 
       {/* ═══ VIEW MODAL ═══ */}
       {viewing && (
-        <div style={S.overlay} onClick={() => setViewing(null)}><div className="sb-modal-inner" style={S.modal} onClick={e => e.stopPropagation()}>
+        <div style={S.overlay} onClick={() => setViewing(null)}><div style={{...S.modal, ...(mob ? {width:'100%',maxWidth:'100%',height:'100vh',maxHeight:'100vh',borderRadius:0,padding:20} : {})}} onClick={e => e.stopPropagation()}>
           <div style={S.fb}><h3 style={{ fontFamily: T.display, fontSize: 20, fontWeight: 400, margin: 0, fontStyle: "italic" }}>Bet Details</h3><button onClick={() => setViewing(null)} style={{ background: "none", border: "none", cursor: "pointer" }}><I n="x" s={20} /></button></div>
           <div style={{ marginTop: 20, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
             {[{ l: "Date", v: viewing.date }, { l: "Sport", v: viewing.sport }, { l: "Bet Type", v: viewing.betType }, { l: "Sportsbook", v: viewing.sportsbook }, { l: "Odds", v: viewing.odds > 0 ? `+${viewing.odds}` : viewing.odds }, { l: "Stake", v: fmt(viewing.stake) }].map(x => (
@@ -878,12 +875,13 @@ function AppMain({ user }) {
 }
 
 function BetModal({ bet, isEdit, settings, saving, onSave, onClose }) {
+  const mob = useIsMobile();
   const [f, setF] = useState({ ...bet, odds: String(bet.odds || ""), closingOdds: String(bet.closingOdds || ""), stake: String(bet.stake || "") });
   const [sw, setSw] = useState("");
   const up = (k, v) => { setF(p => ({ ...p, [k]: v })); if (k === "stake") { const s = parseFloat(v); setSw(s > settings.maxStake ? `Exceeds max stake of ${fmt(settings.maxStake)}` : ""); } };
   const pp = calcPayout(f.stake, f.odds);
   return (
-    <div style={S.overlay} onClick={onClose}><div className="sb-modal-inner" style={S.modal} onClick={e => e.stopPropagation()}>
+    <div style={S.overlay} onClick={onClose}><div style={{...S.modal, ...(mob ? {width:'100%',maxWidth:'100%',height:'100vh',maxHeight:'100vh',borderRadius:0,padding:20} : {})}} onClick={e => e.stopPropagation()}>
       <div style={S.fb}><h3 style={{ fontFamily: T.display, fontSize: 20, fontWeight: 400, margin: 0, fontStyle: "italic" }}>{isEdit ? "Edit Bet" : "Log New Bet"}</h3><button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer" }}><I n="x" s={20} /></button></div>
       <div style={{ marginTop: 20, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
         <div><label style={S.label}>Date</label><input type="date" style={S.input} value={f.date} onChange={e => up("date", e.target.value)} /></div>
