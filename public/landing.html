@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Stakebook — The personal betting journal that keeps you honest. Track bets, analyze CLV, and bet responsibly.">
+<meta name="theme-color" content="#1B4332">
+<title>Stakebook — Smart Betting Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #F5F3EE;
+  --card: #FFFFFF;
+  --border: #E4E0D8;
+  --text: #1C1917;
+  --sub: #78716C;
+  --light: #A8A29E;
+  --brand: #1B4332;
+  --brand-light: #D8F3DC;
+  --brand-mid: #40916C;
+  --red: #C81E1E;
+  --blue: #1D4ED8;
+  --gold: #CA8A04;
+  --serif: 'Instrument Serif', Georgia, serif;
+  --sans: 'Outfit', system-ui, sans-serif;
+}
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Animations ── */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
+
+.anim { opacity: 0; animation: fadeUp 0.8s ease forwards; }
+.anim-d1 { animation-delay: 0.1s; }
+.anim-d2 { animation-delay: 0.2s; }
+.anim-d3 { animation-delay: 0.3s; }
+.anim-d4 { animation-delay: 0.4s; }
+.anim-d5 { animation-delay: 0.5s; }
+.anim-d6 { animation-delay: 0.6s; }
+
+/* ── Layout ── */
+.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+section { padding: 80px 0; }
+
+/* ── Nav ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(245, 243, 238, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 0;
+}
+nav .container {
+  display: flex; justify-content: space-between; align-items: center;
+}
+.nav-logo {
+  font-family: var(--serif); font-size: 22px; color: var(--brand);
+  font-style: italic; display: flex; align-items: center; gap: 10px;
+  text-decoration: none;
+}
+.nav-logo svg { flex-shrink: 0; }
+.nav-links { display: flex; align-items: center; gap: 32px; }
+.nav-links a {
+  font-size: 14px; color: var(--sub); text-decoration: none; font-weight: 500;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--text); }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 22px; border-radius: 8px; font-size: 14px;
+  font-weight: 600; font-family: var(--sans); text-decoration: none;
+  transition: all 0.2s; border: none; cursor: pointer;
+}
+.btn-primary { background: var(--brand); color: #fff; }
+.btn-primary:hover { background: #143728; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(27,67,50,0.2); }
+.btn-ghost { background: transparent; color: var(--sub); border: 1.5px solid var(--border); }
+.btn-ghost:hover { border-color: var(--brand); color: var(--brand); }
+.btn-large { padding: 14px 32px; font-size: 16px; border-radius: 10px; }
+
+/* ── Hero ── */
+.hero {
+  padding: 140px 0 80px;
+  position: relative;
+}
+.hero::before {
+  content: ''; position: absolute; top: 0; right: -200px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(27,67,50,0.04) 0%, transparent 70%);
+  border-radius: 50%; pointer-events: none;
+}
+.hero-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 14px; border-radius: 20px; font-size: 12px;
+  font-weight: 600; color: var(--brand); background: var(--brand-light);
+  margin-bottom: 20px; letter-spacing: 0.02em;
+}
+.hero h1 {
+  font-family: var(--serif); font-size: clamp(38px, 5vw, 56px);
+  font-weight: 400; line-height: 1.1; color: var(--text);
+  margin-bottom: 20px; font-style: italic; letter-spacing: -0.02em;
+}
+.hero h1 span { color: var(--brand); }
+.hero p {
+  font-size: 17px; color: var(--sub); line-height: 1.7;
+  max-width: 440px; margin-bottom: 32px;
+}
+.hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+.hero-note {
+  margin-top: 16px; font-size: 12px; color: var(--light);
+  display: flex; align-items: center; gap: 6px;
+}
+.hero-visual {
+  position: relative;
+}
+.hero-mockup {
+  background: var(--card); border-radius: 16px;
+  border: 1px solid var(--border); padding: 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
+  animation: float 6s ease infinite;
+}
+.mockup-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 16px;
+}
+.mockup-dots { display: flex; gap: 6px; }
+.mockup-dots span { width: 8px; height: 8px; border-radius: 50%; }
+.mockup-stat {
+  background: var(--bg); border-radius: 10px; padding: 14px;
+  margin-bottom: 8px;
+}
+.mockup-stat-label {
+  font-size: 9px; font-weight: 700; color: var(--sub);
+  text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px;
+}
+.mockup-stat-val {
+  font-family: var(--serif); font-size: 24px; font-style: italic;
+  color: var(--brand);
+}
+.mockup-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.mockup-chart {
+  background: var(--bg); border-radius: 10px; padding: 14px;
+  margin-top: 8px; height: 100px; position: relative; overflow: hidden;
+}
+.mockup-chart-line {
+  position: absolute; bottom: 16px; left: 16px; right: 16px;
+  height: 60px;
+}
+.mockup-chart-line svg { width: 100%; height: 100%; }
+
+/* floating accent cards */
+.float-card {
+  position: absolute; background: var(--card);
+  border-radius: 10px; border: 1px solid var(--border);
+  padding: 10px 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  font-size: 11px; z-index: 2;
+}
+.float-card-clv {
+  top: 20px; right: -30px;
+  animation: float 5s ease infinite 0.5s;
+}
+.float-card-streak {
+  bottom: 40px; left: -20px;
+  animation: float 5s ease infinite 1s;
+}
+.float-card .val {
+  font-family: var(--serif); font-size: 18px; font-style: italic;
+  font-weight: 400;
+}
+
+/* ── Problem ── */
+.problem { background: var(--card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.problem-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
+  text-align: center;
+}
+.problem-item {
+  padding: 32px 20px;
+}
+.problem-icon {
+  width: 48px; height: 48px; border-radius: 12px; margin: 0 auto 16px;
+  display: flex; align-items: center; justify-content: center;
+}
+.problem-item h3 {
+  font-family: var(--serif); font-size: 17px; font-weight: 400;
+  font-style: italic; margin-bottom: 8px;
+}
+.problem-item p { font-size: 13px; color: var(--sub); line-height: 1.6; }
+
+/* ── Features ── */
+.features .section-header {
+  text-align: center; margin-bottom: 56px;
+}
+.section-label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--brand); margin-bottom: 12px;
+}
+.section-title {
+  font-family: var(--serif); font-size: clamp(28px, 3.5vw, 40px);
+  font-weight: 400; font-style: italic; line-height: 1.2;
+}
+.section-sub {
+  font-size: 16px; color: var(--sub); max-width: 500px; margin: 12px auto 0;
+}
+.feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.feature-card {
+  background: var(--card); border-radius: 14px; border: 1px solid var(--border);
+  padding: 32px; transition: all 0.3s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.feature-card:hover {
+  border-color: var(--brand); box-shadow: 0 8px 24px rgba(27,67,50,0.06);
+  transform: translateY(-2px);
+}
+.feature-card.featured {
+  grid-column: 1 / -1; display: grid;
+  grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;
+  background: linear-gradient(135deg, var(--brand) 0%, #143728 100%);
+  color: #fff; border-color: transparent;
+}
+.feature-card.featured:hover { border-color: transparent; }
+.feature-card.featured .feature-label { color: var(--brand-light); }
+.feature-card.featured .feature-desc { color: rgba(255,255,255,0.7); }
+.feature-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 16px;
+}
+.feature-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--brand); margin-bottom: 8px;
+}
+.feature-title {
+  font-family: var(--serif); font-size: 20px; font-weight: 400;
+  font-style: italic; margin-bottom: 8px;
+}
+.feature-desc { font-size: 14px; color: var(--sub); line-height: 1.6; }
+
+/* CLV preview in featured card */
+.clv-preview {
+  background: rgba(255,255,255,0.08); border-radius: 12px; padding: 20px;
+  backdrop-filter: blur(10px);
+}
+.clv-bar {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+  font-size: 13px;
+}
+.clv-bar-fill {
+  height: 6px; border-radius: 3px; flex: 1;
+}
+.clv-bar .label { min-width: 50px; color: rgba(255,255,255,0.6); font-size: 11px; }
+.clv-bar .val { font-weight: 700; min-width: 50px; text-align: right; font-size: 12px; }
+
+/* ── How it works ── */
+.how { background: var(--card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.steps-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px;
+  margin-top: 48px;
+}
+.step {
+  text-align: center; position: relative;
+}
+.step-num {
+  font-family: var(--serif); font-size: 48px; font-style: italic;
+  color: var(--brand-light); line-height: 1; margin-bottom: 12px;
+}
+.step h3 {
+  font-family: var(--serif); font-size: 18px; font-weight: 400;
+  font-style: italic; margin-bottom: 8px;
+}
+.step p { font-size: 13px; color: var(--sub); line-height: 1.6; }
+
+/* ── Social proof ── */
+.proof { text-align: center; }
+.proof-stats {
+  display: flex; justify-content: center; gap: 60px; margin-top: 40px;
+  flex-wrap: wrap;
+}
+.proof-stat .num {
+  font-family: var(--serif); font-size: 40px; font-style: italic;
+  color: var(--brand); line-height: 1;
+}
+.proof-stat .label { font-size: 13px; color: var(--sub); margin-top: 4px; }
+
+/* ── CTA ── */
+.cta-section {
+  text-align: center; padding: 100px 0;
+}
+.cta-card {
+  background: linear-gradient(135deg, var(--brand) 0%, #143728 100%);
+  border-radius: 20px; padding: 60px 40px; color: #fff;
+  position: relative; overflow: hidden;
+}
+.cta-card::before {
+  content: ''; position: absolute; top: -50%; right: -30%;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.cta-card h2 {
+  font-family: var(--serif); font-size: clamp(28px, 3.5vw, 38px);
+  font-weight: 400; font-style: italic; margin-bottom: 12px;
+  position: relative;
+}
+.cta-card p {
+  color: rgba(255,255,255,0.7); font-size: 16px;
+  margin-bottom: 28px; position: relative;
+}
+.cta-card .btn-primary {
+  background: #fff; color: var(--brand); position: relative;
+}
+.cta-card .btn-primary:hover { background: var(--brand-light); }
+
+/* ── Footer ── */
+footer {
+  padding: 40px 0; border-top: 1px solid var(--border);
+  text-align: center;
+}
+footer p { font-size: 12px; color: var(--light); }
+footer a { color: var(--sub); text-decoration: none; }
+footer a:hover { color: var(--brand); }
+.footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 12px; }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  section { padding: 60px 0; }
+  .hero { padding: 100px 0 60px; }
+  .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+  .hero-visual { order: -1; }
+  .hero h1 { font-size: 34px; }
+  .hero p { font-size: 15px; }
+  .float-card-clv { right: 0; top: 10px; }
+  .float-card-streak { left: 0; bottom: 20px; }
+  .problem-grid { grid-template-columns: 1fr; gap: 16px; }
+  .feature-grid { grid-template-columns: 1fr; }
+  .feature-card.featured { grid-template-columns: 1fr; }
+  .steps-grid { grid-template-columns: 1fr; gap: 32px; }
+  .proof-stats { gap: 32px; }
+  .cta-card { padding: 40px 24px; }
+  .nav-links a.hide-mobile { display: none; }
+  .btn-large { padding: 12px 24px; font-size: 15px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <div class="container">
+    <a href="#" class="nav-logo">
+      <svg width="28" height="28" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#1B4332"/><path d="M7 24V8l4.5 3.5L16 6l4.5 5.5L25 8v16" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><line x1="7" y1="20" x2="25" y2="20" stroke="#fff" stroke-width="1.5" opacity="0.3"/></svg>
+      Stakebook
+    </a>
+    <div class="nav-links">
+      <a href="#features" class="hide-mobile">Features</a>
+      <a href="#how" class="hide-mobile">How It Works</a>
+      <a href="https://stakebook.vercel.app" class="btn btn-primary">Get Started Free</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-badge anim anim-d1">✦ Free forever for core features</div>
+        <h1 class="anim anim-d2">Track smarter.<br><span>Bet better.</span></h1>
+        <p class="anim anim-d3">The personal betting journal that keeps you honest. Track every bet, analyze your closing line value, and build discipline over delusion.</p>
+        <div class="hero-ctas anim anim-d4">
+          <a href="https://stakebook.vercel.app" class="btn btn-primary btn-large">Start Tracking Free →</a>
+          <a href="#features" class="btn btn-ghost btn-large">See Features</a>
+        </div>
+        <div class="hero-note anim anim-d5">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          No credit card required. Responsible gambling tools built in.
+        </div>
+      </div>
+      <div class="hero-visual anim anim-d3">
+        <div class="hero-mockup">
+          <div class="mockup-header">
+            <div class="mockup-dots"><span style="background:#E4E0D8"></span><span style="background:#E4E0D8"></span><span style="background:#E4E0D8"></span></div>
+            <span style="font-size:10px;color:var(--light)">stakebook.vercel.app</span>
+          </div>
+          <div class="mockup-stats-grid">
+            <div class="mockup-stat">
+              <div class="mockup-stat-label">Net Profit</div>
+              <div class="mockup-stat-val" style="color:var(--brand)">$2,847</div>
+            </div>
+            <div class="mockup-stat">
+              <div class="mockup-stat-label">Win Rate</div>
+              <div class="mockup-stat-val">58.3%</div>
+            </div>
+            <div class="mockup-stat">
+              <div class="mockup-stat-label">Avg. CLV</div>
+              <div class="mockup-stat-val" style="color:var(--brand)">+1.8%</div>
+            </div>
+            <div class="mockup-stat">
+              <div class="mockup-stat-label">Health Score</div>
+              <div class="mockup-stat-val">92/100</div>
+            </div>
+          </div>
+          <div class="mockup-chart">
+            <div class="mockup-chart-line">
+              <svg viewBox="0 0 300 60" preserveAspectRatio="none">
+                <defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1B4332" stop-opacity="0.15"/><stop offset="100%" stop-color="#1B4332" stop-opacity="0"/></linearGradient></defs>
+                <path d="M0 55 L30 50 L60 45 L90 48 L120 35 L150 30 L180 25 L210 28 L240 15 L270 10 L300 5" stroke="#1B4332" stroke-width="2" fill="none"/>
+                <path d="M0 55 L30 50 L60 45 L90 48 L120 35 L150 30 L180 25 L210 28 L240 15 L270 10 L300 5 L300 60 L0 60Z" fill="url(#cg)"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="float-card float-card-clv">
+          <div style="color:var(--sub);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em">CLV</div>
+          <div class="val" style="color:var(--brand)">+2.4%</div>
+          <div style="color:var(--light);font-size:10px">Beat the close ✦</div>
+        </div>
+        <div class="float-card float-card-streak">
+          <div style="color:var(--sub);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em">Streak</div>
+          <div class="val" style="color:var(--brand)">5W 🔥</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Problem -->
+<section class="problem">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:48px">
+      <div class="section-label">The Problem</div>
+      <div class="section-title">Your current setup isn't working</div>
+    </div>
+    <div class="problem-grid">
+      <div class="problem-item">
+        <div class="problem-icon" style="background:#FEE2E2">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C81E1E" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <h3>Sync failures everywhere</h3>
+        <p>Auto-sync apps break constantly with offshore books. Bets show pending for days. Your data is never accurate.</p>
+      </div>
+      <div class="problem-item">
+        <div class="problem-icon" style="background:#FFF7ED">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+        </div>
+        <h3>Spreadsheets are a mess</h3>
+        <p>Excel "works" until you have 500 bets, no charts, and zero insight into whether you're actually beating the market.</p>
+      </div>
+      <div class="problem-item">
+        <div class="problem-icon" style="background:#DBEAFE">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <h3>No one tracks CLV</h3>
+        <p>Most trackers show wins and losses. None show whether you're actually finding value, which is the only metric that predicts long-term profit.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="features" id="features">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Features</div>
+      <div class="section-title">Everything a serious bettor needs</div>
+      <div class="section-sub">A personal analytics tool built for bettors who care about their numbers.</div>
+    </div>
+
+    <div class="feature-grid">
+      <!-- Featured: CLV -->
+      <div class="feature-card featured">
+        <div>
+          <div class="feature-label" style="color:var(--brand-light)">Pro Analytics</div>
+          <div class="feature-title" style="font-size:24px;color:#fff">Closing Line Value Tracking</div>
+          <div class="feature-desc" style="color:rgba(255,255,255,0.7)">The single best predictor of long-term profitability. Track whether you're getting better odds than the market's closing price. This is the metric sharp bettors live by.</div>
+        </div>
+        <div class="clv-preview">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.5);margin-bottom:12px">CLV by Sport</div>
+          <div class="clv-bar"><span class="label">NBA</span><div class="clv-bar-fill" style="background:rgba(255,255,255,0.3)"><div style="width:72%;height:100%;background:var(--brand-light);border-radius:3px"></div></div><span class="val" style="color:var(--brand-light)">+2.1%</span></div>
+          <div class="clv-bar"><span class="label">NFL</span><div class="clv-bar-fill" style="background:rgba(255,255,255,0.3)"><div style="width:58%;height:100%;background:var(--brand-light);border-radius:3px"></div></div><span class="val" style="color:var(--brand-light)">+1.4%</span></div>
+          <div class="clv-bar"><span class="label">NHL</span><div class="clv-bar-fill" style="background:rgba(255,255,255,0.3)"><div style="width:35%;height:100%;background:#FEE2E2;border-radius:3px"></div></div><span class="val" style="color:#FEE2E2">-0.8%</span></div>
+          <div class="clv-bar"><span class="label">Soccer</span><div class="clv-bar-fill" style="background:rgba(255,255,255,0.3)"><div style="width:65%;height:100%;background:var(--brand-light);border-radius:3px"></div></div><span class="val" style="color:var(--brand-light)">+1.9%</span></div>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon" style="background:var(--brand-light)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10" stroke-linecap="round"/><line x1="12" y1="20" x2="12" y2="4" stroke-linecap="round"/><line x1="6" y1="20" x2="6" y2="14" stroke-linecap="round"/></svg>
+        </div>
+        <div class="feature-label">Analytics</div>
+        <div class="feature-title">Deep performance analytics</div>
+        <div class="feature-desc">ROI by sport, bet type, and sportsbook. Streak analysis and confidence calibration. See exactly where your edge is and where it isn't.</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#FEF9C3">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="feature-label">Journal</div>
+        <div class="feature-title">Betting journal & confidence</div>
+        <div class="feature-desc">Attach your reasoning to every bet. Rate your confidence 1–5. Over time, see if your gut actually predicts outcomes.</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#FEE2E2">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="feature-label">Responsible</div>
+        <div class="feature-title">Built-in health safeguards</div>
+        <div class="feature-desc">Spending limits, loss streak alerts, and a betting health score that gives you a single number for how responsibly you're betting. Most trackers ignore this entirely.</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#DBEAFE">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
+        </div>
+        <div class="feature-label">Fast Entry</div>
+        <div class="feature-title">Log bets in seconds</div>
+        <div class="feature-desc">Manual entry done right. Smart defaults, autocomplete, and real-time payout calculation. No sync issues, ever.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="how" id="how">
+  <div class="container">
+    <div style="text-align:center">
+      <div class="section-label">How It Works</div>
+      <div class="section-title">Three steps to better betting</div>
+    </div>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Log your bets</h3>
+        <p>Enter each bet as you place it. Sport, odds, stake, sportsbook. Takes under 10 seconds. Add closing odds later for CLV tracking.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>See the truth</h3>
+        <p>Your dashboard shows what's actually working. Which sports, which bet types, and which books give you an edge.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Improve your edge</h3>
+        <p>Use CLV tracking and analytics to refine your approach. Cut what doesn't work. Double down on what does. Stay disciplined with health alerts.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Social proof -->
+<section class="proof">
+  <div class="container">
+    <div class="section-label">Built for Bettors</div>
+    <div class="section-title">Designed by someone who was tired<br>of bad tracking tools</div>
+    <div class="section-sub" style="margin-top:12px">Stakebook was built because every other app either breaks on sync, sells you picks, or hides features behind a paywall. We just wanted a clean journal that shows the truth.</div>
+    <div class="proof-stats">
+      <div class="proof-stat">
+        <div class="num">$0</div>
+        <div class="label">Core features, forever</div>
+      </div>
+      <div class="proof-stat">
+        <div class="num">&lt;10s</div>
+        <div class="label">To log a bet</div>
+      </div>
+      <div class="proof-stat">
+        <div class="num">100%</div>
+        <div class="label">Your data, private</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-card">
+      <h2>Start tracking smarter today</h2>
+      <p>Free to use, no credit card required. Your betting data deserves better than a spreadsheet and a prayer.</p>
+      <a href="https://stakebook.vercel.app" class="btn btn-primary btn-large">Create Free Account →</a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <div class="footer-links">
+      <a href="https://stakebook.vercel.app">App</a>
+      <a href="#features">Features</a>
+      <a href="/cdn-cgi/l/email-protection#7e161b1212113e0d0a1f151b1c111115501711">Contact</a>
+    </div>
+    <p>© 2026 Stakebook. Bet responsibly. If you or someone you know has a gambling problem, call 1-800-522-4700.</p>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// Scroll-triggered animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.problem-item, .feature-card, .step, .proof-stat').forEach((el, i) => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = `all 0.6s ease ${i * 0.1}s`;
+  observer.observe(el);
+});
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault
