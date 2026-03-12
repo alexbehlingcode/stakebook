@@ -857,7 +857,7 @@ function AppMain({ user }) {
               <div style={S.cTitle}>Behavioral Insights</div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 16 }}>
                 {[
-                  { i: "trend", t: "Bankroll Usage", m: A.avg > settings.bankroll * 0.05 ? `Avg. stake: ${fmt(A.avg)} (${fmtPct(A.avg / settings.bankroll)} of bankroll). Pros recommend 1–5%.` : `Avg. stake: ${fmt(A.avg)} (${fmtPct(A.avg / settings.bankroll)} of bankroll). Within range.`, c: A.avg > settings.bankroll * 0.05 ? T.orange : T.brand },
+                  { i: "trend", t: "Bankroll Usage", m: A.avg > settings.bankroll * 0.03 ? `Avg. stake: ${fmt(A.avg)} (${fmtPct(A.avg / settings.bankroll)} of bankroll). Pros recommend 1–3%.` : `Avg. stake: ${fmt(A.avg)} (${fmtPct(A.avg / settings.bankroll)} of bankroll). Within range.`, c: A.avg > settings.bankroll * 0.03 ? T.orange : T.brand },
                   { i: "chart", t: "Streak Awareness", m: A.cs < -2 ? `${Math.abs(A.cs)}-bet losing streak. Take a break.` : A.cs > 3 ? `${A.cs}-bet win streak! Don't increase stakes.` : "No significant streaks. Stay disciplined.", c: A.cs < -2 ? T.red : A.cs > 3 ? T.brand : T.blue },
                   { i: "star", t: "Confidence Calibration", m: A.acw > A.acl + 0.5 ? "Your gut is well-calibrated. Trust your research." : "Confidence doesn't predict outcomes yet. Keep journaling.", c: A.acw > A.acl + 0.5 ? T.brand : T.orange },
                 ].map((ins, i) => (
@@ -954,7 +954,7 @@ function BetModal({ bet, isEdit, settings, saving, onSave, onClose }) {
       <div style={S.fb}><h3 style={{ fontFamily: T.display, fontSize: 20, fontWeight: 400, margin: 0, fontStyle: "italic" }}>{isEdit ? "Edit Bet" : "Log New Bet"}</h3><button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer" }}><I n="x" s={20} /></button></div>
       <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: mob ? 10 : 14 }}>
         <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap: 10 }}>
-          <div><label style={S.label}>Date</label><input type="date" style={{...S.input, fontSize: 16}} value={f.date} onChange={e => up("date", e.target.value)} /></div>
+          <div><label style={S.label}>Date</label><input type="date" style={{...S.input, fontSize: 16, textAlign: "left"}} value={f.date} onChange={e => up("date", e.target.value)} /></div>
           <div><label style={S.label}>Sport</label><select style={{...S.select, fontSize: 16}} value={f.sport} onChange={e => up("sport", e.target.value)}>{SPORTS.map(s => <option key={s}>{s}</option>)}</select></div>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap: mob ? 10 : 14 }}>
