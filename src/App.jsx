@@ -382,7 +382,7 @@ function AppMain({ user }) {
   const [editing, setEditing] = useState(null);
   const [viewing, setViewing] = useState(null);
   const [tp, setTp] = useState("30d");
-  const [settings, setSettings] = useState({ bankroll: 2500, dailyLimit: 500, weeklyLimit: 2000, monthlyLimit: 5000, maxStake: 250, lossStreakAlert: 3, unitSize: 50 });
+  const [settings, setSettings] = useState({ bankroll: 2500, dailyLimit: 500, weeklyLimit: 2000, monthlyLimit: 5000, maxStake: 250, lossStreakAlert: 5, unitSize: 50 });
   const mob = useIsMobile();
   const [showRecap, setShowRecap] = useState(null); // 'weekly' | 'monthly' | null
   const [showMilestone, setShowMilestone] = useState(null); // milestone object or null
@@ -844,7 +844,7 @@ function AppMain({ user }) {
                   </div>);
                 })}
                 <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 16, marginTop: 8 }}>
-                  <div style={S.cTitle}>Adjust Limits</div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}><div style={S.cTitle}>Adjust Limits</div><button style={{ ...S.btn("ghost"), fontSize: 11, padding: "4px 10px" }} onClick={() => { const u = settings.unitSize || 50; const ns = { unitSize: u, dailyLimit: u * 10, weeklyLimit: u * 40, monthlyLimit: u * 100, maxStake: u * 5, bankroll: u * 50, lossStreakAlert: 5 }; updateSettings(ns); }}>Reset Defaults</button></div>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                     {[{ l: "Unit Size", k: "unitSize" }, { l: "Daily Limit", k: "dailyLimit" }, { l: "Weekly Limit", k: "weeklyLimit" }, { l: "Monthly Limit", k: "monthlyLimit" }, { l: "Max Stake", k: "maxStake" }, { l: "Bankroll", k: "bankroll" }, { l: "Loss Streak Alert", k: "lossStreakAlert" }].map(f => (
                       <div key={f.k}><label style={S.label}>{f.l}</label><input type="number" style={S.input} value={settings[f.k] === 0 ? "" : settings[f.k]} onChange={e => { const raw = e.target.value; const v = raw === "" ? 0 : parseFloat(raw); let ns = { ...settings, [f.k]: v }; if (f.k === "unitSize" && v > 0) { ns = { ...ns, dailyLimit: v * 10, weeklyLimit: v * 40, monthlyLimit: v * 100, maxStake: v * 5, bankroll: v * 50 }; } updateSettings(ns); }} /></div>
