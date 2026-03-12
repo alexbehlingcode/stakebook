@@ -382,7 +382,7 @@ function AppMain({ user }) {
   const [editing, setEditing] = useState(null);
   const [viewing, setViewing] = useState(null);
   const [tp, setTp] = useState("30d");
-  const [settings, setSettings] = useState({ bankroll: 1000, dailyLimit: 200, weeklyLimit: 800, monthlyLimit: 2000, maxStake: 100, lossStreakAlert: 3, unitSize: 50 });
+  const [settings, setSettings] = useState({ bankroll: 10000, dailyLimit: 500, weeklyLimit: 2000, monthlyLimit: 5000, maxStake: 250, lossStreakAlert: 3, unitSize: 50 });
   const mob = useIsMobile();
   const [showRecap, setShowRecap] = useState(null); // 'weekly' | 'monthly' | null
   const [showMilestone, setShowMilestone] = useState(null); // milestone object or null
@@ -609,7 +609,7 @@ function AppMain({ user }) {
               </div>
 
               {/* Streak Highlight */}
-              {(A.cs >= 3 || A.cs <= -3) && (
+              {(A.cs >= 5 || A.cs <= -5) && (
                 <div style={{ marginTop: 12, padding: "14px 18px", borderRadius: T.r, border: `1.5px solid ${A.cs > 0 ? T.brand + "30" : T.red + "30"}`, background: A.cs > 0 ? T.brandLight : T.redBg, display: "flex", alignItems: "center", gap: 12 }}>
                   <span style={{ fontSize: 28 }}>{A.cs > 0 ? "🔥" : "🧊"}</span>
                   <div>
@@ -846,8 +846,8 @@ function AppMain({ user }) {
                 <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 16, marginTop: 8 }}>
                   <div style={S.cTitle}>Adjust Limits</div>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                    {[{ l: "Daily Limit", k: "dailyLimit" }, { l: "Weekly Limit", k: "weeklyLimit" }, { l: "Monthly Limit", k: "monthlyLimit" }, { l: "Max Stake", k: "maxStake" }, { l: "Bankroll", k: "bankroll" }, { l: "Unit Size", k: "unitSize" }, { l: "Loss Streak Alert", k: "lossStreakAlert" }].map(f => (
-                      <div key={f.k}><label style={S.label}>{f.l}</label><input type="number" style={S.input} value={settings[f.k]} onChange={e => { const ns = { ...settings, [f.k]: parseFloat(e.target.value) || 0 }; updateSettings(ns); }} /></div>
+                    {[{ l: "Unit Size", k: "unitSize" }, { l: "Daily Limit", k: "dailyLimit" }, { l: "Weekly Limit", k: "weeklyLimit" }, { l: "Monthly Limit", k: "monthlyLimit" }, { l: "Max Stake", k: "maxStake" }, { l: "Bankroll", k: "bankroll" }, { l: "Loss Streak Alert", k: "lossStreakAlert" }].map(f => (
+                      <div key={f.k}><label style={S.label}>{f.l}</label><input type="number" style={S.input} value={settings[f.k]} onChange={e => { const v = parseFloat(e.target.value) || 0; let ns = { ...settings, [f.k]: v }; if (f.k === "unitSize" && v > 0) { ns = { ...ns, dailyLimit: v * 10, weeklyLimit: v * 40, monthlyLimit: v * 100, maxStake: v * 5, bankroll: v * 200 }; } updateSettings(ns); }} /></div>
                     ))}
                   </div>
                 </div>
@@ -953,7 +953,7 @@ function BetModal({ bet, isEdit, settings, saving, onSave, onClose }) {
     <div style={S.overlay} onClick={onClose}><div style={{...S.modal, ...(mob ? {width:'100%',maxWidth:'100%',height:'100vh',maxHeight:'100vh',borderRadius:0,padding:20} : {})}} onClick={e => e.stopPropagation()}>
       <div style={S.fb}><h3 style={{ fontFamily: T.display, fontSize: 20, fontWeight: 400, margin: 0, fontStyle: "italic" }}>{isEdit ? "Edit Bet" : "Log New Bet"}</h3><button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer" }}><I n="x" s={20} /></button></div>
       <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: mob ? 10 : 14 }}>
-        <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap: mob ? 10 : 14 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: mob ? 10 : 14 }}>
           <div><label style={S.label}>Date</label><input type="date" style={{...S.input, fontSize: 16}} value={f.date} onChange={e => up("date", e.target.value)} /></div>
           <div><label style={S.label}>Sport</label><select style={{...S.select, fontSize: 16}} value={f.sport} onChange={e => up("sport", e.target.value)}>{SPORTS.map(s => <option key={s}>{s}</option>)}</select></div>
         </div>
