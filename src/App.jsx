@@ -382,8 +382,10 @@ function AppMain({ user }) {
   const [editing, setEditing] = useState(null);
   const [viewing, setViewing] = useState(null);
   const [tp, setTp] = useState("30d");
-  const [settings, setSettings] = useState({ bankroll: 1000, dailyLimit: 200, weeklyLimit: 800, monthlyLimit: 2000, maxStake: 100, lossStreakAlert: 3 });
+  const [settings, setSettings] = useState({ bankroll: 1000, dailyLimit: 200, weeklyLimit: 800, monthlyLimit: 2000, maxStake: 100, lossStreakAlert: 3, unitSize: 50 });
   const mob = useIsMobile();
+  const [showRecap, setShowRecap] = useState(null); // 'weekly' | 'monthly' | null
+  const [showMilestone, setShowMilestone] = useState(null); // milestone object or null
 
   // ── Load bets from DB ──
   const loadBets = useCallback(async () => {
@@ -395,7 +397,7 @@ function AppMain({ user }) {
   // ── Load settings from DB ──
   const loadSettings = useCallback(async () => {
     const { data } = await supabase.from("user_settings").select("*").eq("user_id", user.id).single();
-    if (data) setSettings({ bankroll: parseFloat(data.bankroll), dailyLimit: parseFloat(data.daily_limit), weeklyLimit: parseFloat(data.weekly_limit), monthlyLimit: parseFloat(data.monthly_limit), maxStake: parseFloat(data.max_stake), lossStreakAlert: data.loss_streak_alert });
+    if (data) setSettings({ bankroll: parseFloat(data.bankroll), dailyLimit: parseFloat(data.daily_limit), weeklyLimit: parseFloat(data.weekly_limit), monthlyLimit: parseFloat(data.monthly_limit), maxStake: parseFloat(data.max_stake), lossStreakAlert: data.loss_streak_alert, unitSize: parseFloat(data.unit_size) || 50 });
   }, [user.id]);
 
   useEffect(() => { loadBets(); loadSettings(); }, [loadBets, loadSettings]);
@@ -414,6 +416,11 @@ function AppMain({ user }) {
     }
     setSaving(false);
     setShowAdd(false);
+    // Check milestones
+    const newCount = bets.length + (editing ? 0 : 1);
+    const milestones = [10, 25, 50, 100, 250, 500, 1000];
+    const hit = milestones.find(m => newCount === m);
+    if (hit) setShowMilestone({ type: "bets", count: hit });
   };
 
   // ── Delete bet ──
@@ -429,6 +436,7 @@ function AppMain({ user }) {
       bankroll: newSettings.bankroll, daily_limit: newSettings.dailyLimit,
       weekly_limit: newSettings.weeklyLimit, monthly_limit: newSettings.monthlyLimit,
       max_stake: newSettings.maxStake, loss_streak_alert: newSettings.lossStreakAlert,
+      unit_size: newSettings.unitSize,
     }).eq("user_id", user.id);
   };
 
@@ -495,7 +503,7 @@ function AppMain({ user }) {
     const avg = stk / (set.length || 1); if (avg > settings.bankroll * 0.1) hp -= 10;
     hp = Math.max(0, Math.min(100, hp));
 
-    return { total: filtered.length, setN: set.length, w: w.length, l: l.length, push: set.filter(b => b.outcome === "Push").length, pend: filtered.filter(b => b.outcome === "Pending").length, stk, pay, net, roi, wr, pNet, pRoi, pWr, pStk, bySport, byType, byBook, timeline, cs, mw, ml, acw, acl, tStk, wStk, mStk, hp, avg, avgCLV, posCLVwr, negCLVwr, clvTimeline, clvBySport, clvCount: clvValues.length, posCLVcount: posCLV.length };
+    return { total: filtered.length, setN: set.length, w: w.length, l: l.length, push: set.filter(b => b.outcome === "Push").length, pend: filtered.filter(b => b.outcome === "Pending").length, stk, pay, net, roi, wr, pNet, pRoi, pWr, pStk, bySport, byType, byBook, timeline, cs, mw, ml, acw, acl, tStk, wStk, mStk, hp, avg, avgCLV, posCLVwr, negCLVwr, clvTimeline, clvBySport, clvCount: clvValues.length, posCLVcount: posCLV.length, netUnits: settings.unitSize > 0 ? net / settings.unitSize : 0, avgUnits: settings.unitSize > 0 ? avg / settings.unitSize : 0 };
   }, [filtered, prevBets, bets, settings]);
 
   const emptyBet = { date: new Date().toISOString().slice(0, 10), sport: "NBA", betType: "Moneyline", team: "", odds: "", closingOdds: "", stake: "", outcome: "Pending", payout: "", sportsbook: "FanDuel", notes: "", confidence: 3 };
@@ -576,6 +584,10 @@ function AppMain({ user }) {
           <div style={S.sec}>
             <div style={{ ...S.fb, marginBottom: 16, flexWrap: "wrap", gap: 12 }}>
               <h2 style={{ fontFamily: T.display, fontSize: 24, fontWeight: 400, margin: 0, fontStyle: "italic" }}>Dashboard</h2>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                <button style={{ ...S.btn("ghost"), fontSize: 11, padding: "5px 10px" }} onClick={() => { setTp("7d"); setShowRecap("weekly"); }}>Weekly Recap</button>
+                <button style={{ ...S.btn("ghost"), fontSize: 11, padding: "5px 10px" }} onClick={() => { setTp("month"); setShowRecap("monthly"); }}>Monthly Recap</button>
+              </div>
               <TPBar />
             </div>
 
@@ -590,11 +602,22 @@ function AppMain({ user }) {
               </div>
             ) : (<>
               <div style={{...S.g4, gridTemplateColumns: mob ? "1fr 1fr" : "repeat(auto-fit,minmax(200px,1fr))"}}>
-                <div style={S.stat()}><span style={S.sLabel}>Net Profit</span><span style={{...S.sVal(A.net >= 0 ? T.brand : T.red), fontSize: mob ? 22 : 30}}>{fmt(A.net)}</span><div style={{ display: "flex", flexDirection: mob ? "column" : "row", alignItems: mob ? "flex-start" : "center", gap: mob ? 2 : 6 }}><span style={S.sSub}>{fmtPct(A.roi)} ROI</span><Delta cur={A.net} prev={A.pNet} /></div></div>
+                <div style={S.stat()}><span style={S.sLabel}>Net Profit</span><span style={{...S.sVal(A.net >= 0 ? T.brand : T.red), fontSize: mob ? 22 : 30}}>{fmt(A.net)}</span><div style={{ display: "flex", flexDirection: mob ? "column" : "row", alignItems: mob ? "flex-start" : "center", gap: mob ? 2 : 6 }}><span style={S.sSub}>{A.netUnits >= 0 ? "+" : ""}{A.netUnits.toFixed(1)}u · {fmtPct(A.roi)} ROI</span><Delta cur={A.net} prev={A.pNet} /></div></div>
                 <div style={S.stat()}><span style={S.sLabel}>Win Rate</span><span style={{...S.sVal(T.brand), fontSize: mob ? 22 : 30}}>{fmtPct(A.wr)}</span><div style={{ display: "flex", flexDirection: mob ? "column" : "row", alignItems: mob ? "flex-start" : "center", gap: mob ? 2 : 6 }}><span style={S.sSub}>{A.w}W – {A.l}L – {A.push}P</span><Delta cur={A.wr} prev={A.pWr} f="%" /></div></div>
                 <div style={S.stat()}><span style={S.sLabel}>Total Wagered</span><span style={{...S.sVal(), fontSize: mob ? 22 : 30}}>{fmt(A.stk)}</span><div style={{ display: "flex", flexDirection: mob ? "column" : "row", alignItems: mob ? "flex-start" : "center", gap: mob ? 2 : 6 }}><span style={S.sSub}>{A.setN} settled</span><Delta cur={A.stk} prev={A.pStk} /></div></div>
                 <div style={S.stat()}><span style={S.sLabel}>Health Score</span><span style={{...S.sVal(A.hp >= 75 ? T.brand : A.hp >= 50 ? T.orange : T.red), fontSize: mob ? 22 : 30}}>{A.hp}/100</span><span style={S.sSub}>{A.hp >= 75 ? "Looking sharp" : A.hp >= 50 ? "Watch your limits" : "Take a break"}</span></div>
               </div>
+
+              {/* Streak Highlight */}
+              {(A.cs >= 3 || A.cs <= -3) && (
+                <div style={{ marginTop: 12, padding: "14px 18px", borderRadius: T.r, border: `1.5px solid ${A.cs > 0 ? T.brand + "30" : T.red + "30"}`, background: A.cs > 0 ? T.brandLight : T.redBg, display: "flex", alignItems: "center", gap: 12 }}>
+                  <span style={{ fontSize: 28 }}>{A.cs > 0 ? "🔥" : "🧊"}</span>
+                  <div>
+                    <div style={{ fontFamily: T.display, fontSize: 16, fontWeight: 400, fontStyle: "italic", color: A.cs > 0 ? T.brand : T.red }}>{A.cs > 0 ? `${A.cs}-bet win streak!` : `${Math.abs(A.cs)}-bet losing streak`}</div>
+                    <div style={{ fontSize: 12, color: T.sub, marginTop: 2 }}>{A.cs > 0 ? "You're on fire. Stay disciplined and stick to your process." : "Consider stepping back and reviewing your recent picks."}</div>
+                  </div>
+                </div>
+              )}
 
               <div style={{ ...S.g2, marginTop: 16 }}>
                 <div style={S.card}>
@@ -693,7 +716,7 @@ function AppMain({ user }) {
               <TPBar />
             </div>
             <div style={{...S.g4, gridTemplateColumns: mob ? "1fr 1fr" : "repeat(auto-fit,minmax(200px,1fr))"}}>
-              <div style={S.stat()}><span style={S.sLabel}>Avg. Stake</span><span style={{ ...S.sVal(), fontSize: mob ? 20 : 24 }}>{fmt(A.avg)}</span></div>
+              <div style={S.stat()}><span style={S.sLabel}>Avg. Stake</span><span style={{ ...S.sVal(), fontSize: mob ? 20 : 24 }}>{fmt(A.avg)}</span><span style={S.sSub}>{A.avgUnits.toFixed(1)}u per bet</span></div>
               <div style={S.stat()}><span style={S.sLabel}>Current Streak</span><span style={{ ...S.sVal(A.cs >= 0 ? T.brand : T.red), fontSize: mob ? 20 : 24 }}>{A.cs > 0 ? `${A.cs}W 🔥` : A.cs < 0 ? `${Math.abs(A.cs)}L` : "—"}</span></div>
               <div style={S.stat()}><span style={S.sLabel}>Avg. CLV</span><span style={{ ...S.sVal(A.avgCLV > 0 ? T.brand : A.avgCLV < 0 ? T.red : T.sub), fontSize: mob ? 20 : 24 }}>{A.clvCount > 0 ? (A.avgCLV > 0 ? "+" : "") + A.avgCLV.toFixed(2) + "%" : "—"}</span><span style={S.sSub}>{A.clvCount} tracked</span></div>
               <div style={S.stat()}><span style={S.sLabel}>+CLV Win Rate</span><span style={{ ...S.sVal(T.brand), fontSize: mob ? 20 : 24 }}>{A.posCLVcount > 0 ? fmtPct(A.posCLVwr) : "—"}</span><span style={S.sSub}>vs {A.clvCount - A.posCLVcount > 0 ? fmtPct(A.negCLVwr) : "—"} −CLV</span></div>
@@ -823,7 +846,7 @@ function AppMain({ user }) {
                 <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 16, marginTop: 8 }}>
                   <div style={S.cTitle}>Adjust Limits</div>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                    {[{ l: "Daily Limit", k: "dailyLimit" }, { l: "Weekly Limit", k: "weeklyLimit" }, { l: "Monthly Limit", k: "monthlyLimit" }, { l: "Max Stake", k: "maxStake" }, { l: "Bankroll", k: "bankroll" }, { l: "Loss Streak Alert", k: "lossStreakAlert" }].map(f => (
+                    {[{ l: "Daily Limit", k: "dailyLimit" }, { l: "Weekly Limit", k: "weeklyLimit" }, { l: "Monthly Limit", k: "monthlyLimit" }, { l: "Max Stake", k: "maxStake" }, { l: "Bankroll", k: "bankroll" }, { l: "Unit Size", k: "unitSize" }, { l: "Loss Streak Alert", k: "lossStreakAlert" }].map(f => (
                       <div key={f.k}><label style={S.label}>{f.l}</label><input type="number" style={S.input} value={settings[f.k]} onChange={e => { const ns = { ...settings, [f.k]: parseFloat(e.target.value) || 0 }; updateSettings(ns); }} /></div>
                     ))}
                   </div>
@@ -883,40 +906,75 @@ function AppMain({ user }) {
           </div>
         </div></div>
       )}
+
+      {/* ═══ WEEKLY/MONTHLY RECAP ═══ */}
+      {showRecap && (
+        <div style={S.overlay} onClick={() => setShowRecap(null)}><div style={{...S.modal, ...(mob ? {width:'100%',maxWidth:'100%',height:'100vh',maxHeight:'100vh',borderRadius:0,padding:20} : {}), textAlign: "center"}} onClick={e => e.stopPropagation()}>
+          <div style={S.fb}><h3 style={{ fontFamily: T.display, fontSize: 22, fontWeight: 400, margin: 0, fontStyle: "italic" }}>{showRecap === "weekly" ? "Weekly Recap" : "Monthly Recap"}</h3><button onClick={() => setShowRecap(null)} style={{ background: "none", border: "none", cursor: "pointer" }}><I n="x" s={20} /></button></div>
+          <div style={{ marginTop: 24 }}>
+            <div style={{ fontSize: 48, marginBottom: 8 }}>{A.net >= 0 ? "📈" : "📉"}</div>
+            <div style={{ fontFamily: T.display, fontSize: 36, fontStyle: "italic", color: A.net >= 0 ? T.brand : T.red, marginBottom: 4 }}>{fmt(A.net)}</div>
+            <div style={{ fontSize: 14, color: T.sub, marginBottom: 24 }}>{A.netUnits >= 0 ? "+" : ""}{A.netUnits.toFixed(1)} units · {fmtPct(A.roi)} ROI</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, marginBottom: 24 }}>
+              <div style={{ background: T.bg, borderRadius: T.rs, padding: 14 }}><div style={{ fontSize: 11, fontWeight: 700, color: T.sub, textTransform: "uppercase", letterSpacing: "0.06em" }}>Bets</div><div style={{ fontFamily: T.display, fontSize: 24, fontStyle: "italic" }}>{A.setN}</div></div>
+              <div style={{ background: T.bg, borderRadius: T.rs, padding: 14 }}><div style={{ fontSize: 11, fontWeight: 700, color: T.sub, textTransform: "uppercase", letterSpacing: "0.06em" }}>Win Rate</div><div style={{ fontFamily: T.display, fontSize: 24, fontStyle: "italic", color: T.brand }}>{fmtPct(A.wr)}</div></div>
+              <div style={{ background: T.bg, borderRadius: T.rs, padding: 14 }}><div style={{ fontSize: 11, fontWeight: 700, color: T.sub, textTransform: "uppercase", letterSpacing: "0.06em" }}>Health</div><div style={{ fontFamily: T.display, fontSize: 24, fontStyle: "italic", color: A.hp >= 75 ? T.brand : A.hp >= 50 ? T.orange : T.red }}>{A.hp}</div></div>
+            </div>
+            {A.cs !== 0 && <div style={{ padding: "12px 16px", borderRadius: T.rs, background: A.cs > 0 ? T.brandLight : T.redBg, marginBottom: 16, fontSize: 14 }}>{A.cs > 0 ? `🔥 ${A.cs}-bet win streak` : `🧊 ${Math.abs(A.cs)}-bet losing streak`}</div>}
+            {A.clvCount > 0 && <div style={{ padding: "12px 16px", borderRadius: T.rs, background: T.bg, marginBottom: 16, fontSize: 14, color: T.sub }}>Avg. CLV: <strong style={{ color: A.avgCLV > 0 ? T.brand : T.red }}>{A.avgCLV > 0 ? "+" : ""}{A.avgCLV.toFixed(2)}%</strong></div>}
+            <button style={{ ...S.btn("primary"), width: "100%", padding: "14px 20px" }} onClick={() => setShowRecap(null)}>Got it</button>
+          </div>
+        </div></div>
+      )}
+
+      {/* ═══ MILESTONE CELEBRATION ═══ */}
+      {showMilestone && (
+        <div style={S.overlay} onClick={() => setShowMilestone(null)}><div style={{...S.modal, maxWidth: 400, textAlign: "center", padding: 40}} onClick={e => e.stopPropagation()}>
+          <div style={{ fontSize: 56, marginBottom: 12 }}>🏆</div>
+          <div style={{ fontFamily: T.display, fontSize: 28, fontStyle: "italic", color: T.brand, marginBottom: 8 }}>Milestone!</div>
+          <div style={{ fontSize: 16, color: T.sub, marginBottom: 8 }}>You've logged <strong style={{ color: T.text }}>{showMilestone.count} bets</strong> on Stakebook.</div>
+          <div style={{ fontSize: 14, color: T.light, marginBottom: 24 }}>{showMilestone.count >= 100 ? "You're building a serious data set. Your analytics are getting more reliable with every bet." : showMilestone.count >= 50 ? "Great consistency. Your trends are starting to tell a real story." : "You're off to a strong start. Keep logging and the insights will come."}</div>
+          <button style={{ ...S.btn("primary"), padding: "12px 28px" }} onClick={() => setShowMilestone(null)}>Keep going</button>
+        </div></div>
+      )}
     </div>
   );
 }
 
 function BetModal({ bet, isEdit, settings, saving, onSave, onClose }) {
   const mob = useIsMobile();
-  const [f, setF] = useState({ ...bet, odds: String(bet.odds || ""), closingOdds: String(bet.closingOdds || ""), stake: String(bet.stake || "") });
+  const [f, setF] = useState({ ...bet, odds: String(bet.odds || ""), closingOdds: String(bet.closingOdds || ""), stake: String(bet.stake || ""), customBook: bet.sportsbook && !["FanDuel","DraftKings","BetMGM","Caesars","Bet365","PointsBet","Hard Rock","ESPN Bet","Fanatics","Other"].includes(bet.sportsbook) ? bet.sportsbook : "" });
   const [sw, setSw] = useState("");
   const up = (k, v) => { setF(p => ({ ...p, [k]: v })); if (k === "stake") { const s = parseFloat(v); setSw(s > settings.maxStake ? `Exceeds max stake of ${fmt(settings.maxStake)}` : ""); } };
   const pp = calcPayout(f.stake, f.odds);
+  const stakeUnits = f.stake && settings.unitSize > 0 ? (parseFloat(f.stake) / settings.unitSize).toFixed(1) : null;
+  const actualBook = f.sportsbook === "Other" && f.customBook ? f.customBook : f.sportsbook;
   return (
     <div style={S.overlay} onClick={onClose}><div style={{...S.modal, ...(mob ? {width:'100%',maxWidth:'100%',height:'100vh',maxHeight:'100vh',borderRadius:0,padding:20} : {})}} onClick={e => e.stopPropagation()}>
       <div style={S.fb}><h3 style={{ fontFamily: T.display, fontSize: 20, fontWeight: 400, margin: 0, fontStyle: "italic" }}>{isEdit ? "Edit Bet" : "Log New Bet"}</h3><button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer" }}><I n="x" s={20} /></button></div>
-      <div style={{ marginTop: 20, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-        <div><label style={S.label}>Date</label><input type="date" style={S.input} value={f.date} onChange={e => up("date", e.target.value)} /></div>
-        <div><label style={S.label}>Sport</label><select style={S.select} value={f.sport} onChange={e => up("sport", e.target.value)}>{SPORTS.map(s => <option key={s}>{s}</option>)}</select></div>
-        <div><label style={S.label}>Bet Type</label><select style={S.select} value={f.betType} onChange={e => up("betType", e.target.value)}>{BET_TYPES.map(t => <option key={t}>{t}</option>)}</select></div>
-        <div><label style={S.label}>Sportsbook</label><select style={S.select} value={f.sportsbook} onChange={e => up("sportsbook", e.target.value)}>{SPORTSBOOKS.map(b => <option key={b}>{b}</option>)}</select></div>
-        <div style={{ gridColumn: "1/-1" }}><label style={S.label}>Selection / Team(s)</label><input type="text" style={S.input} placeholder="e.g. Celtics -4.5" value={f.team} onChange={e => up("team", e.target.value)} /></div>
-        <div><label style={S.label}>Odds (American)</label><input type="text" style={S.input} placeholder="-110 or +150" value={f.odds} onChange={e => up("odds", e.target.value)} /></div>
-        <div><label style={S.label}>Stake ($)</label><input type="number" style={{ ...S.input, borderColor: sw ? T.orange : T.border }} placeholder="0.00" value={f.stake} onChange={e => up("stake", e.target.value)} />{sw && <div style={{ fontSize: 11, color: T.orange, marginTop: 4 }}>⚠️ {sw}</div>}</div>
-        <div><label style={S.label}>Outcome</label><select style={S.select} value={f.outcome} onChange={e => up("outcome", e.target.value)}>{OUTCOMES.map(o => <option key={o}>{o}</option>)}</select></div>
+      <div style={{ marginTop: 20, display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap: mob ? 10 : 14 }}>
+        <div style={mob ? { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 } : {}}><div><label style={S.label}>Date</label><input type="date" style={{...S.input, fontSize: 16}} value={f.date} onChange={e => up("date", e.target.value)} /></div>
+        {mob && <div><label style={S.label}>Sport</label><select style={{...S.select, fontSize: 16}} value={f.sport} onChange={e => up("sport", e.target.value)}>{SPORTS.map(s => <option key={s}>{s}</option>)}</select></div>}</div>
+        {!mob && <div><label style={S.label}>Sport</label><select style={S.select} value={f.sport} onChange={e => up("sport", e.target.value)}>{SPORTS.map(s => <option key={s}>{s}</option>)}</select></div>}
+        <div><label style={S.label}>Bet Type</label><select style={{...S.select, fontSize: mob ? 16 : 14}} value={f.betType} onChange={e => up("betType", e.target.value)}>{BET_TYPES.map(t => <option key={t}>{t}</option>)}</select></div>
+        <div><label style={S.label}>Sportsbook</label><select style={{...S.select, fontSize: mob ? 16 : 14}} value={f.sportsbook} onChange={e => up("sportsbook", e.target.value)}>{SPORTSBOOKS.map(b => <option key={b}>{b}</option>)}</select></div>
+        {f.sportsbook === "Other" && <div style={{ gridColumn: mob ? "1" : "1/-1" }}><label style={S.label}>Sportsbook Name</label><input type="text" style={{...S.input, fontSize: mob ? 16 : 14}} placeholder="Enter sportsbook name" value={f.customBook || ""} onChange={e => up("customBook", e.target.value)} /></div>}
+        <div style={{ gridColumn: mob ? "1" : "1/-1" }}><label style={S.label}>Selection / Team(s)</label><input type="text" style={{...S.input, fontSize: mob ? 16 : 14}} placeholder="e.g. Celtics -4.5" value={f.team} onChange={e => up("team", e.target.value)} /></div>
+        <div><label style={S.label}>Odds (American)</label><input type="text" style={{...S.input, fontSize: mob ? 16 : 14}} placeholder="-110 or +150" value={f.odds} onChange={e => up("odds", e.target.value)} /></div>
+        <div><label style={S.label}>Stake ($){stakeUnits && <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: 0, color: T.brand, marginLeft: 6 }}>{stakeUnits}u</span>}</label><input type="number" style={{ ...S.input, fontSize: mob ? 16 : 14, borderColor: sw ? T.orange : T.border }} placeholder="0.00" value={f.stake} onChange={e => up("stake", e.target.value)} />{sw && <div style={{ fontSize: 11, color: T.orange, marginTop: 4 }}>⚠️ {sw}</div>}</div>
+        <div><label style={S.label}>Outcome</label><select style={{...S.select, fontSize: mob ? 16 : 14}} value={f.outcome} onChange={e => up("outcome", e.target.value)}>{OUTCOMES.map(o => <option key={o}>{o}</option>)}</select></div>
         <div><label style={S.label}>Potential Payout</label><div style={{ padding: "10px 12px", background: T.bg, borderRadius: T.rs, fontSize: 16, fontWeight: 600, fontFamily: T.display, color: T.brand, fontStyle: "italic" }}>{f.stake && f.odds ? fmt(pp) : "—"}</div></div>
-        <div><label style={S.label}>Closing Odds <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: 0, color: T.light }}>(optional)</span></label><input type="text" style={S.input} placeholder="-125 or +140" value={f.closingOdds} onChange={e => up("closingOdds", e.target.value)} /></div>
+        <div><label style={S.label}>Closing Odds <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: 0, color: T.light }}>(optional)</span></label><input type="text" style={{...S.input, fontSize: mob ? 16 : 14}} placeholder="-125 or +140" value={f.closingOdds} onChange={e => up("closingOdds", e.target.value)} /></div>
         <div><label style={S.label}>CLV</label><div style={{ padding: "10px 12px", background: T.bg, borderRadius: T.rs, fontSize: 16, fontWeight: 600, fontFamily: T.display, fontStyle: "italic", ...(() => { const clv = calcCLV(f.odds, f.closingOdds); return clv === null ? { color: T.light } : { color: clv > 0 ? T.brand : clv < 0 ? T.red : T.sub }; })() }}>{(() => { const clv = calcCLV(f.odds, f.closingOdds); return clv === null ? "—" : (clv > 0 ? "+" : "") + clv.toFixed(2) + "%"; })()}</div></div>
-        <div style={{ gridColumn: "1/-1" }}><label style={S.label}>Confidence</label>
+        <div style={{ gridColumn: mob ? "1" : "1/-1" }}><label style={S.label}>Confidence</label>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}><Stars v={f.confidence} onChange={v => up("confidence", v)} sz={24} />
             <span style={{ fontSize: 12, color: T.sub }}>{f.confidence <= 1 ? "Flyer" : f.confidence <= 2 ? "Gut feel" : f.confidence <= 3 ? "Decent edge" : f.confidence <= 4 ? "Strong conviction" : "Lock"}</span></div>
         </div>
-        <div style={{ gridColumn: "1/-1" }}><label style={S.label}>Journal Notes</label><textarea style={{ ...S.input, minHeight: 80, resize: "vertical" }} placeholder="Why are you making this bet?" value={f.notes} onChange={e => up("notes", e.target.value)} /></div>
+        <div style={{ gridColumn: mob ? "1" : "1/-1" }}><label style={S.label}>Journal Notes</label><textarea style={{ ...S.input, minHeight: 80, resize: "vertical", fontSize: mob ? 16 : 14 }} placeholder="Why are you making this bet?" value={f.notes} onChange={e => up("notes", e.target.value)} /></div>
       </div>
       <div style={{ display: "flex", gap: 10, marginTop: 20, justifyContent: "flex-end" }}>
         <button style={S.btn("ghost")} onClick={onClose}>Cancel</button>
-        <button style={{ ...S.btn("primary"), opacity: !f.team || !f.stake || saving ? 0.5 : 1 }} disabled={!f.team || !f.stake || saving} onClick={() => onSave(f)}>{saving ? "Saving..." : isEdit ? "Save Changes" : "Log Bet"}</button>
+        <button style={{ ...S.btn("primary"), opacity: !f.team || !f.stake || saving ? 0.5 : 1 }} disabled={!f.team || !f.stake || saving} onClick={() => onSave({...f, sportsbook: actualBook})}>{saving ? "Saving..." : isEdit ? "Save Changes" : "Log Bet"}</button>
       </div>
     </div></div>
   );
