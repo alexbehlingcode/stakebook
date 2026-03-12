@@ -953,9 +953,9 @@ function BetModal({ bet, isEdit, settings, saving, onSave, onClose }) {
     <div style={S.overlay} onClick={onClose}><div style={{...S.modal, ...(mob ? {width:'100%',maxWidth:'100%',height:'100vh',maxHeight:'100vh',borderRadius:0,padding:20} : {})}} onClick={e => e.stopPropagation()}>
       <div style={S.fb}><h3 style={{ fontFamily: T.display, fontSize: 20, fontWeight: 400, margin: 0, fontStyle: "italic" }}>{isEdit ? "Edit Bet" : "Log New Bet"}</h3><button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer" }}><I n="x" s={20} /></button></div>
       <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: mob ? 10 : 14 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-          <div style={{ minWidth: 0, overflow: "hidden" }}><label style={S.label}>Date</label><input type="date" style={{...S.input, fontSize: 16, width: "100%", minWidth: 0}} value={f.date} onChange={e => up("date", e.target.value)} /></div>
-          <div style={{ minWidth: 0, overflow: "hidden" }}><label style={S.label}>Sport</label><select style={{...S.select, fontSize: 16, width: "100%", minWidth: 0}} value={f.sport} onChange={e => up("sport", e.target.value)}>{SPORTS.map(s => <option key={s}>{s}</option>)}</select></div>
+        <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap: 10 }}>
+          <div><label style={S.label}>Date</label><input type="date" style={{...S.input, fontSize: 16}} value={f.date} onChange={e => up("date", e.target.value)} /></div>
+          <div><label style={S.label}>Sport</label><select style={{...S.select, fontSize: 16}} value={f.sport} onChange={e => up("sport", e.target.value)}>{SPORTS.map(s => <option key={s}>{s}</option>)}</select></div>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap: mob ? 10 : 14 }}>
           <div><label style={S.label}>Bet Type</label><select style={{...S.select, fontSize: mob ? 16 : 14}} value={f.betType} onChange={e => up("betType", e.target.value)}>{BET_TYPES.map(t => <option key={t}>{t}</option>)}</select></div>
