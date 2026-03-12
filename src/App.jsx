@@ -952,25 +952,34 @@ function BetModal({ bet, isEdit, settings, saving, onSave, onClose }) {
   return (
     <div style={S.overlay} onClick={onClose}><div style={{...S.modal, ...(mob ? {width:'100%',maxWidth:'100%',height:'100vh',maxHeight:'100vh',borderRadius:0,padding:20} : {})}} onClick={e => e.stopPropagation()}>
       <div style={S.fb}><h3 style={{ fontFamily: T.display, fontSize: 20, fontWeight: 400, margin: 0, fontStyle: "italic" }}>{isEdit ? "Edit Bet" : "Log New Bet"}</h3><button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer" }}><I n="x" s={20} /></button></div>
-      <div style={{ marginTop: 20, display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap: mob ? 10 : 14 }}>
-        <div style={mob ? { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 } : {}}><div><label style={S.label}>Date</label><input type="date" style={{...S.input, fontSize: 16}} value={f.date} onChange={e => up("date", e.target.value)} /></div>
-        {mob && <div><label style={S.label}>Sport</label><select style={{...S.select, fontSize: 16}} value={f.sport} onChange={e => up("sport", e.target.value)}>{SPORTS.map(s => <option key={s}>{s}</option>)}</select></div>}</div>
-        {!mob && <div><label style={S.label}>Sport</label><select style={S.select} value={f.sport} onChange={e => up("sport", e.target.value)}>{SPORTS.map(s => <option key={s}>{s}</option>)}</select></div>}
-        <div><label style={S.label}>Bet Type</label><select style={{...S.select, fontSize: mob ? 16 : 14}} value={f.betType} onChange={e => up("betType", e.target.value)}>{BET_TYPES.map(t => <option key={t}>{t}</option>)}</select></div>
-        <div><label style={S.label}>Sportsbook</label><select style={{...S.select, fontSize: mob ? 16 : 14}} value={f.sportsbook} onChange={e => up("sportsbook", e.target.value)}>{SPORTSBOOKS.map(b => <option key={b}>{b}</option>)}</select></div>
-        {f.sportsbook === "Other" && <div style={{ gridColumn: mob ? "1" : "1/-1" }}><label style={S.label}>Sportsbook Name</label><input type="text" style={{...S.input, fontSize: mob ? 16 : 14}} placeholder="Enter sportsbook name" value={f.customBook || ""} onChange={e => up("customBook", e.target.value)} /></div>}
-        <div style={{ gridColumn: mob ? "1" : "1/-1" }}><label style={S.label}>Selection / Team(s)</label><input type="text" style={{...S.input, fontSize: mob ? 16 : 14}} placeholder="e.g. Celtics -4.5" value={f.team} onChange={e => up("team", e.target.value)} /></div>
-        <div><label style={S.label}>Odds (American)</label><input type="text" style={{...S.input, fontSize: mob ? 16 : 14}} placeholder="-110 or +150" value={f.odds} onChange={e => up("odds", e.target.value)} /></div>
-        <div><label style={S.label}>Stake ($){stakeUnits && <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: 0, color: T.brand, marginLeft: 6 }}>{stakeUnits}u</span>}</label><input type="number" style={{ ...S.input, fontSize: mob ? 16 : 14, borderColor: sw ? T.orange : T.border }} placeholder="0.00" value={f.stake} onChange={e => up("stake", e.target.value)} />{sw && <div style={{ fontSize: 11, color: T.orange, marginTop: 4 }}>⚠️ {sw}</div>}</div>
-        <div><label style={S.label}>Outcome</label><select style={{...S.select, fontSize: mob ? 16 : 14}} value={f.outcome} onChange={e => up("outcome", e.target.value)}>{OUTCOMES.map(o => <option key={o}>{o}</option>)}</select></div>
-        <div><label style={S.label}>Potential Payout</label><div style={{ padding: "10px 12px", background: T.bg, borderRadius: T.rs, fontSize: 16, fontWeight: 600, fontFamily: T.display, color: T.brand, fontStyle: "italic" }}>{f.stake && f.odds ? fmt(pp) : "—"}</div></div>
-        <div><label style={S.label}>Closing Odds <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: 0, color: T.light }}>(optional)</span></label><input type="text" style={{...S.input, fontSize: mob ? 16 : 14}} placeholder="-125 or +140" value={f.closingOdds} onChange={e => up("closingOdds", e.target.value)} /></div>
-        <div><label style={S.label}>CLV</label><div style={{ padding: "10px 12px", background: T.bg, borderRadius: T.rs, fontSize: 16, fontWeight: 600, fontFamily: T.display, fontStyle: "italic", ...(() => { const clv = calcCLV(f.odds, f.closingOdds); return clv === null ? { color: T.light } : { color: clv > 0 ? T.brand : clv < 0 ? T.red : T.sub }; })() }}>{(() => { const clv = calcCLV(f.odds, f.closingOdds); return clv === null ? "—" : (clv > 0 ? "+" : "") + clv.toFixed(2) + "%"; })()}</div></div>
-        <div style={{ gridColumn: mob ? "1" : "1/-1" }}><label style={S.label}>Confidence</label>
+      <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: mob ? 10 : 14 }}>
+        <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap: mob ? 10 : 14 }}>
+          <div><label style={S.label}>Date</label><input type="date" style={{...S.input, fontSize: 16}} value={f.date} onChange={e => up("date", e.target.value)} /></div>
+          <div><label style={S.label}>Sport</label><select style={{...S.select, fontSize: 16}} value={f.sport} onChange={e => up("sport", e.target.value)}>{SPORTS.map(s => <option key={s}>{s}</option>)}</select></div>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap: mob ? 10 : 14 }}>
+          <div><label style={S.label}>Bet Type</label><select style={{...S.select, fontSize: mob ? 16 : 14}} value={f.betType} onChange={e => up("betType", e.target.value)}>{BET_TYPES.map(t => <option key={t}>{t}</option>)}</select></div>
+          <div><label style={S.label}>Sportsbook</label><select style={{...S.select, fontSize: mob ? 16 : 14}} value={f.sportsbook} onChange={e => up("sportsbook", e.target.value)}>{SPORTSBOOKS.map(b => <option key={b}>{b}</option>)}</select></div>
+        </div>
+        {f.sportsbook === "Other" && <div><label style={S.label}>Sportsbook Name</label><input type="text" style={{...S.input, fontSize: mob ? 16 : 14}} placeholder="Enter sportsbook name" value={f.customBook || ""} onChange={e => up("customBook", e.target.value)} /></div>}
+        <div><label style={S.label}>Selection / Team(s)</label><input type="text" style={{...S.input, fontSize: mob ? 16 : 14}} placeholder="e.g. Celtics -4.5" value={f.team} onChange={e => up("team", e.target.value)} /></div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: mob ? 10 : 14 }}>
+          <div><label style={S.label}>Odds (American)</label><input type="text" style={{...S.input, fontSize: mob ? 16 : 14}} placeholder="-110 or +150" value={f.odds} onChange={e => up("odds", e.target.value)} /></div>
+          <div><label style={S.label}>Stake ($){stakeUnits && <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: 0, color: T.brand, marginLeft: 6 }}>{stakeUnits}u</span>}</label><input type="number" style={{ ...S.input, fontSize: mob ? 16 : 14, borderColor: sw ? T.orange : T.border }} placeholder="0.00" value={f.stake} onChange={e => up("stake", e.target.value)} />{sw && <div style={{ fontSize: 11, color: T.orange, marginTop: 4 }}>⚠️ {sw}</div>}</div>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: mob ? 10 : 14 }}>
+          <div><label style={S.label}>Outcome</label><select style={{...S.select, fontSize: mob ? 16 : 14}} value={f.outcome} onChange={e => up("outcome", e.target.value)}>{OUTCOMES.map(o => <option key={o}>{o}</option>)}</select></div>
+          <div><label style={S.label}>Potential Payout</label><div style={{ padding: "10px 12px", background: T.bg, borderRadius: T.rs, fontSize: 16, fontWeight: 600, fontFamily: T.display, color: T.brand, fontStyle: "italic" }}>{f.stake && f.odds ? fmt(pp) : "—"}</div></div>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: mob ? 10 : 14 }}>
+          <div><label style={S.label}>Closing Odds <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: 0, color: T.light }}>(optional)</span></label><input type="text" style={{...S.input, fontSize: mob ? 16 : 14}} placeholder="-125 or +140" value={f.closingOdds} onChange={e => up("closingOdds", e.target.value)} /></div>
+          <div><label style={S.label}>CLV</label><div style={{ padding: "10px 12px", background: T.bg, borderRadius: T.rs, fontSize: 16, fontWeight: 600, fontFamily: T.display, fontStyle: "italic", ...(() => { const clv = calcCLV(f.odds, f.closingOdds); return clv === null ? { color: T.light } : { color: clv > 0 ? T.brand : clv < 0 ? T.red : T.sub }; })() }}>{(() => { const clv = calcCLV(f.odds, f.closingOdds); return clv === null ? "—" : (clv > 0 ? "+" : "") + clv.toFixed(2) + "%"; })()}</div></div>
+        </div>
+        <div><label style={S.label}>Confidence</label>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}><Stars v={f.confidence} onChange={v => up("confidence", v)} sz={24} />
             <span style={{ fontSize: 12, color: T.sub }}>{f.confidence <= 1 ? "Flyer" : f.confidence <= 2 ? "Gut feel" : f.confidence <= 3 ? "Decent edge" : f.confidence <= 4 ? "Strong conviction" : "Lock"}</span></div>
         </div>
-        <div style={{ gridColumn: mob ? "1" : "1/-1" }}><label style={S.label}>Journal Notes</label><textarea style={{ ...S.input, minHeight: 80, resize: "vertical", fontSize: mob ? 16 : 14 }} placeholder="Why are you making this bet?" value={f.notes} onChange={e => up("notes", e.target.value)} /></div>
+        <div><label style={S.label}>Journal Notes</label><textarea style={{ ...S.input, minHeight: 80, resize: "vertical", fontSize: mob ? 16 : 14 }} placeholder="Why are you making this bet?" value={f.notes} onChange={e => up("notes", e.target.value)} /></div>
       </div>
       <div style={{ display: "flex", gap: 10, marginTop: 20, justifyContent: "flex-end" }}>
         <button style={S.btn("ghost")} onClick={onClose}>Cancel</button>
