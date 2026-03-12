@@ -950,11 +950,11 @@ function BetModal({ bet, isEdit, settings, saving, onSave, onClose }) {
   const stakeUnits = f.stake && settings.unitSize > 0 ? (parseFloat(f.stake) / settings.unitSize).toFixed(1) : null;
   const actualBook = f.sportsbook === "Other" && f.customBook ? f.customBook : f.sportsbook;
   return (
-    <div style={S.overlay} onClick={onClose}><div style={{...S.modal, ...(mob ? {width:'100%',maxWidth:'100%',height:'100vh',maxHeight:'100vh',borderRadius:0,padding:20} : {})}} onClick={e => e.stopPropagation()}>
+    <div style={S.overlay} onClick={onClose}><div style={{...S.modal, ...(mob ? {width:'100%',maxWidth:'100%',height:'100vh',maxHeight:'100vh',borderRadius:0,padding:20,overflowX:'hidden',overflowY:'auto'} : {})}} onClick={e => e.stopPropagation()}>
       <div style={S.fb}><h3 style={{ fontFamily: T.display, fontSize: 20, fontWeight: 400, margin: 0, fontStyle: "italic" }}>{isEdit ? "Edit Bet" : "Log New Bet"}</h3><button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer" }}><I n="x" s={20} /></button></div>
       <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: mob ? 10 : 14 }}>
         <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap: 10 }}>
-          <div><label style={S.label}>Date</label><input type="date" style={{...S.input, fontSize: 16, textAlign: "left"}} value={f.date} onChange={e => up("date", e.target.value)} /></div>
+          <div><label style={S.label}>Date</label><input type="date" style={{...S.input, fontSize: 16, display: "block", boxSizing: "border-box", width: "100%", maxWidth: "100%"}} value={f.date} onChange={e => up("date", e.target.value)} /></div>
           <div><label style={S.label}>Sport</label><select style={{...S.select, fontSize: 16}} value={f.sport} onChange={e => up("sport", e.target.value)}>{SPORTS.map(s => <option key={s}>{s}</option>)}</select></div>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap: mob ? 10 : 14 }}>
