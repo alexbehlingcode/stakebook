@@ -858,7 +858,7 @@ function AppMain({ user }) {
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 16 }}>
                 {[
                   { i: "trend", t: "Bankroll Usage", m: A.avg > settings.bankroll * 0.03 ? `Avg. stake: ${fmt(A.avg)} (${fmtPct(A.avg / settings.bankroll)} of bankroll). Pros recommend 1–3%.` : `Avg. stake: ${fmt(A.avg)} (${fmtPct(A.avg / settings.bankroll)} of bankroll). Within range.`, c: A.avg > settings.bankroll * 0.03 ? T.orange : T.brand },
-                  { i: "chart", t: "Streak Awareness", m: A.cs < -2 ? `${Math.abs(A.cs)}-bet losing streak. Take a break.` : A.cs > 3 ? `${A.cs}-bet win streak! Don't increase stakes.` : "No significant streaks. Stay disciplined.", c: A.cs < -2 ? T.red : A.cs > 3 ? T.brand : T.blue },
+                  { i: "chart", t: "Streak Awareness", m: A.cs < -5 ? `${Math.abs(A.cs)}-bet losing streak. Take a break.` : A.cs > 5 ? `${A.cs}-bet win streak! Don't increase stakes.` : "No significant streaks. Stay disciplined.", c: A.cs < -5 ? T.red : A.cs > 5 ? T.brand : T.blue },
                   { i: "star", t: "Confidence Calibration", m: A.acw > A.acl + 0.5 ? "Your gut is well-calibrated. Trust your research." : "Confidence doesn't predict outcomes yet. Keep journaling.", c: A.acw > A.acl + 0.5 ? T.brand : T.orange },
                 ].map((ins, i) => (
                   <div key={i} style={{ padding: 16, background: T.bg, borderRadius: T.rs, borderLeft: `3px solid ${ins.c}` }}>
