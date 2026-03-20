@@ -13,6 +13,8 @@ const BET_TYPES = ["Moneyline","Spread","Over/Under","Parlay","Prop","Futures","
 const OUTCOMES = ["Win","Loss","Push","Pending"];
 const SPORTSBOOKS = ["FanDuel","DraftKings","BetMGM","Caesars","Bet365","PointsBet","Hard Rock","ESPN Bet","Fanatics","Other"];
 const TIME_PERIODS = [
+    { id: "today", label: "Today" },
+    { id: "yesterday", label: "Yesterday" },
   { id:"7d", label:"7 Days" },
   { id:"30d", label:"30 Days" },
   { id:"month", label:"This Month" },
@@ -288,6 +290,7 @@ function AuthScreen({ onAuth }) {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [rememberMe, setRememberMe] = useState(() => !!localStorage.getItem("sb_email"));
+  const [ageConfirmed, setAgeConfirmed] = useState(false);
 
   useEffect(() => {
     const tryFaceID = async () => {
@@ -367,8 +370,14 @@ function AuthScreen({ onAuth }) {
               <label htmlFor="rememberMe" style={{ fontSize: 13, color: T.sub, cursor: "pointer" }}>Remember me</label>
             </div>
           )}
-          <button style={{ ...S.btn("primary"), width: "100%", padding: "12px 20px", opacity: loading ? 0.7 : 1 }}
-            disabled={loading} onClick={handleSubmit}>
+          {mode === "signup" && (
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+              <input type="checkbox" id="ageConfirm" checked={ageConfirmed} onChange={e => setAgeConfirmed(e.target.checked)} style={{ accentColor: T.brand, width: 16, height: 16, cursor: "pointer" }} />
+              <label htmlFor="ageConfirm" style={{ fontSize: 13, color: T.sub, cursor: "pointer" }}>I confirm I am at least 18 years old</label>
+            </div>
+          )}
+          <button style={{ ...S.btn("primary"), width: "100%", padding: "12px 20px", opacity: loading || (mode === "signup" && !ageConfirmed) ? 0.7 : 1 }}
+            disabled={loading || (mode === "signup" && !ageConfirmed)} onClick={handleSubmit}>
             {loading ? "..." : mode === "login" ? "Log In" : mode === "signup" ? "Create Account" : "Send Reset Email"}
           </button>
 
@@ -406,7 +415,7 @@ function AppMain({ user }) {
   const [showAdd, setShowAdd] = useState(false);
   const [editing, setEditing] = useState(null);
   const [viewing, setViewing] = useState(null);
-  const [tp, setTp] = useState("30d");
+  const [tp, setTp] = useState("today");
 
 
   const [settings, setSettings] = useState({ bankroll: 2500, dailyLimit: 500, weeklyLimit: 2000, monthlyLimit: 5000, maxStake: 250, lossStreakAlert: 5, unitSize: 50 });
@@ -471,7 +480,9 @@ function AppMain({ user }) {
   const handleLogout = async () => { await supabase.auth.signOut(); };
 
   // ── Analytics computation (same as before) ──
-  const filtered = useMemo(() => { const c = getCutoff(tp); return bets.filter(b => new Date(b.date) >= c); }, [bets, tp]);
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const yesterdayStr = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
+  const filtered = useMemo(() => { if (tp === "today") return bets.filter(b => b.date === todayStr); if (tp === "yesterday") return bets.filter(b => b.date === yesterdayStr); const c = getCutoff(tp); return bets.filter(b => new Date(b.date) >= c); }, [bets, tp]);
   const prevBets = useMemo(() => { const p = getPrev(tp); if (!p) return []; return bets.filter(b => { const d = new Date(b.date); return d >= p.s && d < p.e; }); }, [bets, tp]);
 
   const A = useMemo(() => {
@@ -518,7 +529,9 @@ function AppMain({ user }) {
     clvValues.forEach(b => { if (!clvBySport[b.sport]) clvBySport[b.sport] = { sum: 0, n: 0 }; clvBySport[b.sport].sum += b.clv; clvBySport[b.sport].n++; });
 
     const today = new Date().toISOString().slice(0, 10);
+    const yd = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
     const tStk = bets.filter(b => b.date === today).reduce((a, b) => a + b.stake, 0);
+    const yStk = bets.filter(b => b.date === yd).reduce((a, b) => a + b.stake, 0);
     const now = new Date(); const wa = new Date(now.getTime() - 7 * 864e5);
     const wStk = bets.filter(b => new Date(b.date) >= wa).reduce((a, b) => a + b.stake, 0);
     const ms = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -530,7 +543,7 @@ function AppMain({ user }) {
     const avg = stk / (set.length || 1); if (avg > settings.bankroll * 0.1) hp -= 10;
     hp = Math.max(0, Math.min(100, hp));
 
-    return { total: filtered.length, setN: set.length, w: w.length, l: l.length, push: set.filter(b => b.outcome === "Push").length, pend: filtered.filter(b => b.outcome === "Pending").length, stk, pay, net, roi, wr, pNet, pRoi, pWr, pStk, bySport, byType, byBook, timeline, cs, mw, ml, acw, acl, tStk, wStk, mStk, hp, avg, avgCLV, posCLVwr, negCLVwr, clvTimeline, clvBySport, clvCount: clvValues.length, posCLVcount: posCLV.length, netUnits: settings.unitSize > 0 ? net / settings.unitSize : 0, avgUnits: settings.unitSize > 0 ? avg / settings.unitSize : 0 };
+    return { total: filtered.length, setN: set.length, w: w.length, l: l.length, push: set.filter(b => b.outcome === "Push").length, pend: filtered.filter(b => b.outcome === "Pending").length, stk, pay, net, roi, wr, pNet, pRoi, pWr, pStk, bySport, byType, byBook, timeline, cs, mw, ml, acw, acl, tStk, yStk, wStk, mStk, hp, avg, avgCLV, posCLVwr, negCLVwr, clvTimeline, clvBySport, clvCount: clvValues.length, posCLVcount: posCLV.length, netUnits: settings.unitSize > 0 ? net / settings.unitSize : 0, avgUnits: settings.unitSize > 0 ? avg / settings.unitSize : 0 };
   }, [filtered, prevBets, bets, settings]);
 
   const emptyBet = { date: new Date().toISOString().slice(0, 10), sport: "NBA", betType: "Moneyline", team: "", odds: "", closingOdds: "", stake: "", outcome: "Pending", payout: "", sportsbook: "FanDuel", notes: "", confidence: 3 };
@@ -1101,6 +1114,24 @@ function AccountScreen({ onLogout }) {
     checkBiometricAvailable().then(setBiometricAvailable);
   }, []);
 
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase.from("bets").delete().eq("user_id", user.id);
+        await supabase.from("user_settings").delete().eq("user_id", user.id);
+        await supabase.auth.signOut();
+        localStorage.clear();
+        window.location.reload();
+      }
+    } catch (e) { alert("Error deleting account. Contact support@stakebook.live"); }
+    setDeleting(false);
+  };
+
   const toggleBiometric = async () => {
     if (!biometricEnabled) {
       const ok = await runBiometricAuth("Enable Face ID for Stakebook");
@@ -1148,6 +1179,26 @@ function AccountScreen({ onLogout }) {
           <I n="logout" s={16} c={T.red} /> Sign Out
         </span>
       </button>
+
+      <button onClick={() => setShowDeleteConfirm(true)} style={{ ...S.btn("ghost"), width: "100%", padding: "12px 20px", color: T.red, border: "none", marginTop: 8, opacity: 0.7 }}>
+        <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, fontSize: 13 }}>
+          <I n="trash-2" s={14} c={T.red} /> Delete Account
+        </span>
+      </button>
+
+      {showDeleteConfirm && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999, padding: 24 }}>
+          <div style={{ background: "#fff", borderRadius: 16, padding: 28, maxWidth: 340, width: "100%", textAlign: "center" }}>
+            <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 8, color: T.red }}>Delete Account?</div>
+            <p style={{ fontSize: 13, color: T.sub, lineHeight: 1.6, marginBottom: 24 }}>This will permanently delete your account and all betting data. This cannot be undone.</p>
+            <button onClick={handleDeleteAccount} disabled={deleting} style={{ ...S.btn("primary"), width: "100%", padding: "12px 20px", background: T.red, marginBottom: 10 }}>
+              {deleting ? "Deleting..." : "Yes, Delete My Account"}
+            </button>
+            <button onClick={() => setShowDeleteConfirm(false)} style={{ ...S.btn("ghost"), width: "100%", padding: "12px 20px" }}>Cancel</button>
+          </div>
+        </div>
+      )}
+
       <div style={{ display: "flex", justifyContent: "center", gap: 24, marginTop: 20 }}>
         <button onClick={() => openBrowser("https://www.stakebook.live/terms.html")} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 12, color: T.sub }}>Terms of Service</button>
         <button onClick={() => openBrowser("https://www.stakebook.live/privacy.html")} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 12, color: T.sub }}>Privacy Policy</button>
