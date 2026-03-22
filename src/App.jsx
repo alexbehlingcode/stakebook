@@ -480,8 +480,8 @@ function AppMain({ user }) {
   const handleLogout = async () => { await supabase.auth.signOut(); };
 
   // ── Analytics computation (same as before) ──
-  const todayStr = new Date().toISOString().slice(0, 10);
-  const yesterdayStr = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
+  const todayStr = (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; })();
+  const yesterdayStr = (() => { const d = new Date(Date.now() - 864e5); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; })();
   const filtered = useMemo(() => { if (tp === "today") return bets.filter(b => b.date === todayStr); if (tp === "yesterday") return bets.filter(b => b.date === yesterdayStr); const c = getCutoff(tp); return bets.filter(b => new Date(b.date) >= c); }, [bets, tp]);
   const prevBets = useMemo(() => { const p = getPrev(tp); if (!p) return []; return bets.filter(b => { const d = new Date(b.date); return d >= p.s && d < p.e; }); }, [bets, tp]);
 
@@ -528,8 +528,8 @@ function AppMain({ user }) {
     const clvBySport = {};
     clvValues.forEach(b => { if (!clvBySport[b.sport]) clvBySport[b.sport] = { sum: 0, n: 0 }; clvBySport[b.sport].sum += b.clv; clvBySport[b.sport].n++; });
 
-    const today = new Date().toISOString().slice(0, 10);
-    const yd = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
+    const today = (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })();
+    const yd = (() => { const d = new Date(Date.now() - 864e5); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })();
     const tStk = bets.filter(b => b.date === today).reduce((a, b) => a + b.stake, 0);
     const yStk = bets.filter(b => b.date === yd).reduce((a, b) => a + b.stake, 0);
     const now = new Date(); const wa = new Date(now.getTime() - 7 * 864e5);
@@ -546,7 +546,7 @@ function AppMain({ user }) {
     return { total: filtered.length, setN: set.length, w: w.length, l: l.length, push: set.filter(b => b.outcome === "Push").length, pend: filtered.filter(b => b.outcome === "Pending").length, stk, pay, net, roi, wr, pNet, pRoi, pWr, pStk, bySport, byType, byBook, timeline, cs, mw, ml, acw, acl, tStk, yStk, wStk, mStk, hp, avg, avgCLV, posCLVwr, negCLVwr, clvTimeline, clvBySport, clvCount: clvValues.length, posCLVcount: posCLV.length, netUnits: settings.unitSize > 0 ? net / settings.unitSize : 0, avgUnits: settings.unitSize > 0 ? avg / settings.unitSize : 0 };
   }, [filtered, prevBets, bets, settings]);
 
-  const emptyBet = { date: new Date().toISOString().slice(0, 10), sport: "NBA", betType: "Moneyline", team: "", odds: "", closingOdds: "", stake: "", outcome: "Pending", payout: "", sportsbook: "FanDuel", notes: "", confidence: 3 };
+  const emptyBet = { date: (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })(), sport: "NBA", betType: "Moneyline", team: "", odds: "", closingOdds: "", stake: "", outcome: "Pending", payout: "", sportsbook: "FanDuel", notes: "", confidence: 3 };
 
   const alerts = useMemo(() => {
     const a = [];
