@@ -15,7 +15,7 @@ const SPORTSBOOKS = ["FanDuel","DraftKings","BetMGM","Caesars","Bet365","PointsB
 const TIME_PERIODS = [
     { id: "today", label: "Today" },
     { id: "yesterday", label: "Yesterday" },
-  { id:"7d", label:"7 Days" },
+  { id:"thisweek", label:"This Week" },
   { id:"30d", label:"30 Days" },
   { id:"month", label:"This Month" },
   { id:"quarter", label:"Quarter" },
@@ -258,7 +258,7 @@ function getCutoff(id) {
   const now=new Date();
   const d=new Date(now.getFullYear(),now.getMonth(),now.getDate());
   switch(id){
-    case "7d":return new Date(d.getTime()-7*864e5);
+    case "thisweek":{ const dow=d.getDay(); const off=dow===0?6:dow-1; return new Date(d.getFullYear(),d.getMonth(),d.getDate()-off); } case "7d":return new Date(d.getTime()-7*864e5);
     case "30d":return new Date(d.getTime()-30*864e5);
     case "month":return new Date(d.getFullYear(),d.getMonth(),1);
     case "quarter":{const q=Math.floor(d.getMonth()/3)*3;return new Date(d.getFullYear(),q,1);}
@@ -270,7 +270,7 @@ function getPrev(id) {
   const now=new Date();
   const d=new Date(now.getFullYear(),now.getMonth(),now.getDate());
   switch(id){
-    case "7d":{const e=new Date(d.getTime()-7*864e5);return{s:new Date(e.getTime()-7*864e5),e};}
+    case "thisweek":{ const dow2=d.getDay(); const off2=dow2===0?6:dow2-1; const thisMon=new Date(d.getFullYear(),d.getMonth(),d.getDate()-off2); const lastMon=new Date(thisMon.getTime()-7*864e5); return{s:lastMon,e:thisMon}; } case "7d":{const e=new Date(d.getTime()-7*864e5);return{s:new Date(e.getTime()-7*864e5),e};}
     case "30d":{const e=new Date(d.getTime()-30*864e5);return{s:new Date(e.getTime()-30*864e5),e};}
     case "month":{const e=new Date(d.getFullYear(),d.getMonth(),1);return{s:new Date(e.getFullYear(),e.getMonth()-1,1),e};}
     case "quarter":{const q=Math.floor(d.getMonth()/3)*3;const e=new Date(d.getFullYear(),q,1);return{s:new Date(d.getFullYear(),q-3,1),e};}
@@ -423,6 +423,19 @@ function AppMain({ user }) {
   const [showRecap, setShowRecap] = useState(null); // 'weekly' | 'monthly' | null
   const [showMilestone, setShowMilestone] = useState(null); // milestone object or null
 
+  // ── Auto-show weekly recap on Mondays ──
+  useEffect(() => {
+    if (bets.length === 0) return;
+    const now = new Date();
+    if (now.getDay() === 1) {
+      const todayKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
+      if (localStorage.getItem("sb_recap_shown") !== todayKey) {
+        localStorage.setItem("sb_recap_shown", todayKey);
+        setShowRecap("weekly");
+      }
+    }
+  }, [bets]);
+
   // ── Load bets from DB ──
   const loadBets = useCallback(async () => {
     const { data, error } = await supabase.from("bets").select("*").eq("user_id", user.id).order("date", { ascending: false });
@@ -482,7 +495,7 @@ function AppMain({ user }) {
   // ── Analytics computation (same as before) ──
   const todayStr = (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; })();
   const yesterdayStr = (() => { const d = new Date(Date.now() - 864e5); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; })();
-  const filtered = useMemo(() => { if (tp === "today") return bets.filter(b => b.date === todayStr); if (tp === "yesterday") return bets.filter(b => b.date === yesterdayStr); const c = getCutoff(tp); return bets.filter(b => new Date(b.date) >= c); }, [bets, tp]);
+  const filtered = useMemo(() => { if (tp === "today") return bets.filter(b => b.date === todayStr); if (tp === "yesterday") return bets.filter(b => b.date === yesterdayStr); if (tp === "thisweek") { const now = new Date(); const dow = now.getDay(); const off = dow === 0 ? 6 : dow - 1; const mon = new Date(now.getFullYear(), now.getMonth(), now.getDate() - off); return bets.filter(b => new Date(b.date) >= mon); } const c = getCutoff(tp); return bets.filter(b => new Date(b.date) >= c); }, [bets, tp]);
   const prevBets = useMemo(() => { const p = getPrev(tp); if (!p) return []; return bets.filter(b => { const d = new Date(b.date); return d >= p.s && d < p.e; }); }, [bets, tp]);
 
   const A = useMemo(() => {
@@ -532,7 +545,7 @@ function AppMain({ user }) {
     const yd = (() => { const d = new Date(Date.now() - 864e5); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })();
     const tStk = bets.filter(b => b.date === today).reduce((a, b) => a + b.stake, 0);
     const yStk = bets.filter(b => b.date === yd).reduce((a, b) => a + b.stake, 0);
-    const now = new Date(); const wa = new Date(now.getTime() - 7 * 864e5);
+    const now = new Date(); const dayOfWeek = now.getDay(); const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1; const wa = new Date(now.getFullYear(), now.getMonth(), now.getDate() - mondayOffset);
     const wStk = bets.filter(b => new Date(b.date) >= wa).reduce((a, b) => a + b.stake, 0);
     const ms = new Date(now.getFullYear(), now.getMonth(), 1);
     const mStk = bets.filter(b => new Date(b.date) >= ms).reduce((a, b) => a + b.stake, 0);
@@ -635,7 +648,7 @@ function AppMain({ user }) {
             <div style={{ ...S.fb, marginBottom: 16, flexWrap: "wrap", gap: 12 }}>
               <h2 style={{ fontFamily: T.display, fontSize: 24, fontWeight: 400, margin: 0, fontStyle: "italic" }}>Dashboard</h2>
               <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                <button style={{ ...S.btn("ghost"), fontSize: 11, padding: "5px 10px" }} onClick={() => { setTp("7d"); setShowRecap("weekly"); }}>Weekly Recap</button>
+                <button style={{ ...S.btn("ghost"), fontSize: 11, padding: "5px 10px" }} onClick={() => { setTp("thisweek"); setShowRecap("weekly"); }}>Weekly Recap</button>
                 <button style={{ ...S.btn("ghost"), fontSize: 11, padding: "5px 10px" }} onClick={() => { setTp("month"); setShowRecap("monthly"); }}>Monthly Recap</button>
               </div>
               <TPBar />
@@ -958,24 +971,37 @@ function AppMain({ user }) {
       )}
 
       {/* ═══ WEEKLY/MONTHLY RECAP ═══ */}
-      {showRecap && (
+      {showRecap && (() => {
+        const _now = new Date(); const _dow = _now.getDay(); const _off = _dow === 0 ? 6 : _dow - 1;
+        const _thisMon = new Date(_now.getFullYear(), _now.getMonth(), _now.getDate() - _off);
+        const _lastMon = new Date(_thisMon.getTime() - 7 * 864e5);
+        const rb = showRecap === "weekly" ? bets.filter(b => { const bd = new Date(b.date); return bd >= _lastMon && bd < _thisMon; }) : filtered;
+        const rW = rb.filter(b => b.outcome === "Win"); const rL = rb.filter(b => b.outcome === "Loss");
+        const rStk = rb.reduce((a, b) => a + b.stake, 0); const rPay = rb.reduce((a, b) => a + (b.payout || 0), 0);
+        const rNet = rPay - rStk; const rRoi = rStk > 0 ? rNet / rStk : 0; const rWr = rb.length > 0 ? rW.length / rb.length : 0;
+        const rUnits = settings.unitSize > 0 ? rNet / settings.unitSize : 0;
+        let rCs = 0; const rSorted = [...rb].sort((a,c) => new Date(c.date) - new Date(a.date));
+        for (let i = 0; i < rSorted.length; i++) { if (i === 0) { rCs = rSorted[i].outcome === "Win" ? 1 : -1; continue; } if (rSorted[i].outcome === "Win" && rCs > 0) rCs++; else if (rSorted[i].outcome === "Loss" && rCs < 0) rCs--; else break; }
+        const rClv = rb.filter(b => b.closingOdds).map(b => ({ ...b, clv: calcCLV(b.odds, b.closingOdds) })).filter(b => b.clv !== null);
+        const rAvgCLV = rClv.length > 0 ? rClv.reduce((a, b) => a + b.clv, 0) / rClv.length : 0;
+        return (
         <div style={S.overlay} onClick={() => setShowRecap(null)}><div style={{...S.modal, ...(mob ? {width:'100%',maxWidth:'100%',height:'100vh',maxHeight:'100vh',borderRadius:0,padding:20,paddingTop:'max(20px, env(safe-area-inset-top))'} : {}), textAlign: "center"}} onClick={e => e.stopPropagation()}>
           <div style={S.fb}><h3 style={{ fontFamily: T.display, fontSize: 22, fontWeight: 400, margin: 0, fontStyle: "italic" }}>{showRecap === "weekly" ? "Weekly Recap" : "Monthly Recap"}</h3><button onClick={() => setShowRecap(null)} style={{ background: "none", border: "none", cursor: "pointer" }}><I n="x" s={20} /></button></div>
           <div style={{ marginTop: 24 }}>
-            <div style={{ fontSize: 48, marginBottom: 8 }}>{A.net >= 0 ? "📈" : "📉"}</div>
-            <div style={{ fontFamily: T.display, fontSize: 36, fontStyle: "italic", color: A.net >= 0 ? T.brand : T.red, marginBottom: 4 }}>{fmt(A.net)}</div>
-            <div style={{ fontSize: 14, color: T.sub, marginBottom: 24 }}>{A.netUnits >= 0 ? "+" : ""}{A.netUnits.toFixed(1)} units · {fmtPct(A.roi)} ROI</div>
+            <div style={{ fontSize: 48, marginBottom: 8 }}>{rNet >= 0 ? "📈" : "📉"}</div>
+            <div style={{ fontFamily: T.display, fontSize: 36, fontStyle: "italic", color: rNet >= 0 ? T.brand : T.red, marginBottom: 4 }}>{fmt(rNet)}</div>
+            <div style={{ fontSize: 14, color: T.sub, marginBottom: 24 }}>{rUnits >= 0 ? "+" : ""}{rUnits.toFixed(1)} units · {fmtPct(rRoi)} ROI</div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, marginBottom: 24 }}>
-              <div style={{ background: T.bg, borderRadius: T.rs, padding: 14 }}><div style={{ fontSize: 11, fontWeight: 700, color: T.sub, textTransform: "uppercase", letterSpacing: "0.06em" }}>Bets</div><div style={{ fontFamily: T.display, fontSize: 24, fontStyle: "italic" }}>{A.setN}</div></div>
-              <div style={{ background: T.bg, borderRadius: T.rs, padding: 14 }}><div style={{ fontSize: 11, fontWeight: 700, color: T.sub, textTransform: "uppercase", letterSpacing: "0.06em" }}>Win Rate</div><div style={{ fontFamily: T.display, fontSize: 24, fontStyle: "italic", color: T.brand }}>{fmtPct(A.wr)}</div></div>
+              <div style={{ background: T.bg, borderRadius: T.rs, padding: 14 }}><div style={{ fontSize: 11, fontWeight: 700, color: T.sub, textTransform: "uppercase", letterSpacing: "0.06em" }}>Bets</div><div style={{ fontFamily: T.display, fontSize: 24, fontStyle: "italic" }}>{rb.length}</div></div>
+              <div style={{ background: T.bg, borderRadius: T.rs, padding: 14 }}><div style={{ fontSize: 11, fontWeight: 700, color: T.sub, textTransform: "uppercase", letterSpacing: "0.06em" }}>Win Rate</div><div style={{ fontFamily: T.display, fontSize: 24, fontStyle: "italic", color: T.brand }}>{fmtPct(rWr)}</div></div>
               <div style={{ background: T.bg, borderRadius: T.rs, padding: 14 }}><div style={{ fontSize: 11, fontWeight: 700, color: T.sub, textTransform: "uppercase", letterSpacing: "0.06em" }}>Health</div><div style={{ fontFamily: T.display, fontSize: 24, fontStyle: "italic", color: A.hp >= 75 ? T.brand : A.hp >= 50 ? T.orange : T.red }}>{A.hp}</div></div>
             </div>
-            {A.cs !== 0 && <div style={{ padding: "12px 16px", borderRadius: T.rs, background: A.cs > 0 ? T.brandLight : T.redBg, marginBottom: 16, fontSize: 14 }}>{A.cs > 0 ? `🔥 ${A.cs}-bet win streak` : `🧊 ${Math.abs(A.cs)}-bet losing streak`}</div>}
-            {A.clvCount > 0 && <div style={{ padding: "12px 16px", borderRadius: T.rs, background: T.bg, marginBottom: 16, fontSize: 14, color: T.sub }}>Avg. CLV: <strong style={{ color: A.avgCLV > 0 ? T.brand : T.red }}>{A.avgCLV > 0 ? "+" : ""}{A.avgCLV.toFixed(2)}%</strong></div>}
+            {rCs !== 0 && <div style={{ padding: "12px 16px", borderRadius: T.rs, background: rCs > 0 ? T.brandLight : T.redBg, marginBottom: 16, fontSize: 14 }}>{rCs > 0 ? `🔥 ${rCs}-bet win streak` : `🧊 ${Math.abs(rCs)}-bet losing streak`}</div>}
+            {rClv.length > 0 && <div style={{ padding: "12px 16px", borderRadius: T.rs, background: T.bg, marginBottom: 16, fontSize: 14, color: T.sub }}>Avg. CLV: <strong style={{ color: rAvgCLV > 0 ? T.brand : T.red }}>{rAvgCLV > 0 ? "+" : ""}{rAvgCLV.toFixed(2)}%</strong></div>}
             <button style={{ ...S.btn("primary"), width: "100%", padding: "14px 20px" }} onClick={() => setShowRecap(null)}>Got it</button>
           </div>
         </div></div>
-      )}
+      ); })()}
 
       {/* ═══ MILESTONE CELEBRATION ═══ */}
       {showMilestone && (
