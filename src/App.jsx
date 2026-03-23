@@ -569,8 +569,8 @@ function AppMain({ user }) {
     return a;
   }, [A, settings]);
 
-  const Delta = ({ cur, prev, f = "$" }) => {
-    if (!prev && !cur) return null; const d = cur - prev; if (Math.abs(d) < 0.001) return null;
+  const Delta = ({ cur, prev, f = "$", hide }) => {
+    if (hide) return null; if (!prev && !cur) return null; const d = cur - prev; if (Math.abs(d) < 0.001) return null;
     const up = d > 0, good = up;
     const txt = f === "$" ? (up ? "+" : "") + (mob && Math.abs(d) >= 1000 ? `$${(d/1000).toFixed(1)}k` : fmt(d)) : (up ? "+" : "") + (d * 100).toFixed(1) + "%";
     return <span style={{ display: "inline-flex", alignItems: "center", gap: 2, fontSize: mob ? 9 : 10, fontWeight: 700, color: good ? T.brand : T.red, background: good ? T.brandLight : T.redBg, padding: "2px 6px", borderRadius: 5, whiteSpace: "nowrap" }}><I n={up ? "up" : "down"} s={8} c={good ? T.brand : T.red} />{txt}</span>;
@@ -665,9 +665,9 @@ function AppMain({ user }) {
               </div>
             ) : (<>
               <div style={{...S.g4, gridTemplateColumns: mob ? "1fr 1fr" : "repeat(auto-fit,minmax(200px,1fr))"}}>
-                <div style={S.stat()}><span style={S.sLabel}>Net Profit</span><span style={{...S.sVal(A.net >= 0 ? T.brand : T.red), fontSize: mob ? 22 : 30}}>{fmt(A.net)}</span><div style={{ display: "flex", flexDirection: mob ? "column" : "row", alignItems: mob ? "flex-start" : "center", gap: mob ? 2 : 6 }}><span style={S.sSub}>{A.netUnits >= 0 ? "+" : ""}{A.netUnits.toFixed(1)}u · {fmtPct(A.roi)} ROI</span><Delta cur={A.net} prev={A.pNet} /></div></div>
-                <div style={S.stat()}><span style={S.sLabel}>Win Rate</span><span style={{...S.sVal(T.brand), fontSize: mob ? 22 : 30}}>{fmtPct(A.wr)}</span><div style={{ display: "flex", flexDirection: mob ? "column" : "row", alignItems: mob ? "flex-start" : "center", gap: mob ? 2 : 6 }}><span style={S.sSub}>{A.w}W – {A.l}L – {A.push}P</span><Delta cur={A.wr} prev={A.pWr} f="%" /></div></div>
-                <div style={S.stat()}><span style={S.sLabel}>Total Wagered</span><span style={{...S.sVal(), fontSize: mob ? 22 : 30}}>{fmt(A.stk)}</span><div style={{ display: "flex", flexDirection: mob ? "column" : "row", alignItems: mob ? "flex-start" : "center", gap: mob ? 2 : 6 }}><span style={S.sSub}>{A.setN} settled</span><Delta cur={A.stk} prev={A.pStk} /></div></div>
+                <div style={S.stat()}><span style={S.sLabel}>Net Profit</span><span style={{...S.sVal(A.net >= 0 ? T.brand : T.red), fontSize: mob ? 22 : 30}}>{fmt(A.net)}</span><div style={{ display: "flex", flexDirection: mob ? "column" : "row", alignItems: mob ? "flex-start" : "center", gap: mob ? 2 : 6 }}><span style={S.sSub}>{A.netUnits >= 0 ? "+" : ""}{A.netUnits.toFixed(1)}u · {fmtPct(A.roi)} ROI</span><Delta cur={A.net} prev={A.pNet} hide={A.setN === 0} /></div></div>
+                <div style={S.stat()}><span style={S.sLabel}>Win Rate</span><span style={{...S.sVal(T.brand), fontSize: mob ? 22 : 30}}>{fmtPct(A.wr)}</span><div style={{ display: "flex", flexDirection: mob ? "column" : "row", alignItems: mob ? "flex-start" : "center", gap: mob ? 2 : 6 }}><span style={S.sSub}>{A.w}W – {A.l}L – {A.push}P</span><Delta cur={A.wr} prev={A.pWr} f="%" hide={A.setN === 0} /></div></div>
+                <div style={S.stat()}><span style={S.sLabel}>Total Wagered</span><span style={{...S.sVal(), fontSize: mob ? 22 : 30}}>{fmt(A.stk)}</span><div style={{ display: "flex", flexDirection: mob ? "column" : "row", alignItems: mob ? "flex-start" : "center", gap: mob ? 2 : 6 }}><span style={S.sSub}>{A.setN} settled</span><Delta cur={A.stk} prev={A.pStk} hide={A.setN === 0} /></div></div>
                 <div style={S.stat()}><span style={S.sLabel}>Health Score</span><span style={{...S.sVal(A.hp >= 75 ? T.brand : A.hp >= 50 ? T.orange : T.red), fontSize: mob ? 22 : 30}}>{A.hp}/100</span><span style={S.sSub}>{A.hp >= 75 ? "Looking sharp" : A.hp >= 50 ? "Watch your limits" : "Take a break"}</span></div>
               </div>
 
