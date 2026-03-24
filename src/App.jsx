@@ -546,7 +546,7 @@ function AppMain({ user }) {
     const tStk = bets.filter(b => b.date === today).reduce((a, b) => a + b.stake, 0);
     const yStk = bets.filter(b => b.date === yd).reduce((a, b) => a + b.stake, 0);
     const now = new Date(); const dayOfWeek = now.getDay(); const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1; const wa = new Date(now.getFullYear(), now.getMonth(), now.getDate() - mondayOffset);
-    const wStk = bets.filter(b => new Date(b.date) >= wa).reduce((a, b) => a + b.stake, 0);
+    const wStk = bets.filter(b => b.date >= (() => { const d = wa; return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })()).reduce((a, b) => a + b.stake, 0);
     const ms = new Date(now.getFullYear(), now.getMonth(), 1);
     const mStk = bets.filter(b => new Date(b.date) >= ms).reduce((a, b) => a + b.stake, 0);
 
