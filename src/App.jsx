@@ -1150,6 +1150,12 @@ function AccountScreen({ onLogout }) {
       if (user) {
         await supabase.from("bets").delete().eq("user_id", user.id);
         await supabase.from("user_settings").delete().eq("user_id", user.id);
+        const res = await fetch("https://pkrokkrcluymaitpcmaq.supabase.co/functions/v1/delete-user", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": "Bearer " + (await supabase.auth.getSession()).data.session.access_token },
+          body: JSON.stringify({ user_id: user.id })
+        });
+        if (!res.ok) throw new Error("Failed to delete account");
         await supabase.auth.signOut();
         localStorage.clear();
         window.location.reload();
